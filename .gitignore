@@ -1,0 +1,43 @@
+# Node.js
+/frontend/node_modules/
+/frontend/.env
+/frontend/.next/
+/frontend/build/
+frontend/package-lock.json
+frontend/yarn.lock
+
+# Python
+/backend/venv/
+/backend/.env
+/backend/__pycache__/
+__pycache__
+*.pyc
+/backend/*.pyc
+/backend/*.pyo
+/backend/*.pyd
+/backend/db.sqlite3
+
+# Django
+/backend/staticfiles/
+/backend/media/
+backend/local_settings.py
+backend/.mypy_cache/
+backend/.pytest_cache/
+backend/.coverage
+backend/*.log
+
+# IDE and OS-specific files
+*.DS_Store
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+.idea/
+*.iml
+
+# Environment files
+.env
+*.env
+myenv
+
+brainstorm.txt
