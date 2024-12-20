@@ -1,0 +1,1 @@
+Chatter is a real-time messaging application that is (being) built with Django for the backend, React + Tailwind for the frontend, PostgreSQL as the database- and some other fun stuff I may pick up on the way.
