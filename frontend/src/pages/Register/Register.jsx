@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { BASE_URL } from "../../constants";
 import Input from "../../components/form/Input";
 import Button from "../../components/form/Button";
 
 // Toast Notification
-import { Bounce, Slide, ToastContainer, toast } from 'react-toastify';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
 export function Register(){
@@ -26,7 +26,6 @@ export function Register(){
     const validate = () => {
         let isValid = true;
         if(password !== password2){
-            console.log("P1 !== 2")
             setError((prev) => ({...prev, password2: 'Passwords do not match'}));
             isValid =  false;
         }
