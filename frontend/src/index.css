@@ -32,3 +32,16 @@
     transform: rotate(360deg);
   }
 }
+
+.messages-container > :last-child{
+  padding-bottom: 10px;
+}
+
+.message-content-display{
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  line-height: 1.5em;
+}
