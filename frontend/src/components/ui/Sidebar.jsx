@@ -7,14 +7,14 @@ import SidebarLink from './SidebarLink';
 
 export default function Sidebar(){
     return (
-        <div className='border border-e-slate-200 py-4 px-3.5 h-screen w-[20%]'>
+        <div className='border border-e-slate-200 py-4 px-4 h-screen w-[20%]'>
             <div className='flex flex-col h-full'>
                 <div className='flex items-center'>
                     <img src={logo} alt="logo" className='h-6 me-2'/>
                     <h1 className='text-lg font-bold'>Chatter</h1>
                 </div>
                 {/* Links */}
-                <div className='flex flex-col mt-6 gap-y-4 px-2 text-[12px] font-semibold h-full'>
+                <div className='flex flex-col mt-6 gap-y-4 px-3 text-[12px] font-semibold h-full'>
                     {Array(7).fill("_").map((link, idx) => (
                         <SidebarLink 
                             key={idx}
@@ -24,7 +24,7 @@ export default function Sidebar(){
                         <div className='flex items-center justify-between'>
                             <div className='flex items-center'>
                                 <img src={notification} alt="" className='h-4'/>
-                                <h2 className='ms-2'>Notifications</h2>
+                                <h2 className='ms-2 text-[13px]'>Notifications</h2>
                             </div>
                             <div className='h-5 w-6 rounded-full bg-white border-[1.5px] border-slate-200 flex items-center justify-center text-[10px] px-2.5 py-1.5 text-slate-700'>
                             99
@@ -33,7 +33,7 @@ export default function Sidebar(){
                         <div className='flex items-center justify-between'>
                             <div className='flex items-center'>
                                 <img src={settings} alt="" className='h-4'/>
-                                <h2 className='ms-2'>Settings</h2>
+                                <h2 className='ms-2 text-[13px]'>Settings</h2>
                             </div>
                             <div className='h-5 w-6 rounded-full bg-white border-[1.5px] border-slate-200 flex items-center justify-center text-[10px] px-2.5 py-1.5 text-slate-700'>
                             99
