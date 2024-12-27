@@ -10,7 +10,7 @@ from .serializers import UserSerializer
 
 @api_view(['GET'])
 def user_list(request):
-    print(f"{request.user} is getting all users")
+
     users = CustomUser.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)

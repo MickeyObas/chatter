@@ -3,56 +3,28 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import logout as django_logout
+from django.contrib.auth import login as django_login
 
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from django.http import JsonResponse
 
 from django.contrib.auth import authenticate
 from django.core.cache import cache
+from django.middleware.csrf import get_token
 
 from accounts.models import CustomUser
 from accounts.serializers import UserSerializer
 
 
-# Custom Auth fot HTTPONLY cookies
-class CustomTokenObtainPairView(TokenObtainPairView):
-    permission_classes = [AllowAny]
-
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        refresh = response.data.get("refresh")
-        access = response.data.get("access")
-
-        # Set cookies
-        response.set_cookie(
-            "refresh_token",
-            refresh,
-            httponly=True,
-            secure=True,
-            samesite="Lax"
-        )
-        response.set_cookie(
-            "access_token",
-            access,
-            httponly=True,
-            secure=True,
-            samesite="Lax"
-        )
-
-        return response
-    
-
 class CustomLogoutView(APIView):
-    def post(self, request):
-        print(f"Logging out {request.user}")
-        response = JsonResponse({"message": "Logged out!"})
-        response.delete_cookie("refresh_token")
-        response.delete_cookie("access_token")
-        response.delete_cookie("csrftoken")
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return JsonResponse({'detail': 'You are not logged in'}, status=400)
+        
         django_logout(request)
-        return response
+        
+        return JsonResponse({"detail": "SUccessfully logged out!"}) 
 
 
 @api_view(['POST'])
@@ -80,10 +52,7 @@ def login(request):
         if not user.is_verified:
             return Response({'error': 'Email is not verified. Please check your email to complete registration.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            refresh = RefreshToken.for_user(user)
             response = Response({
-                # 'refresh': str(refresh),
-                # 'access': str(refresh.access_token),
                 'user': {
                     'id': user.id,
                     'email': user.email,
@@ -92,20 +61,7 @@ def login(request):
                 }
             })
 
-            # Set cookies
-            response.set_cookie(
-                "refresh_token",
-                str(refresh),
-                httponly=True,
-                samesite='Lax'
-            )
-
-            response.set_cookie(
-                "access_token",
-                str(refresh.access_token),
-                httponly=True,
-                samesite="Lax"
-            )
+            django_login(request, user)
 
             return response
             
@@ -127,11 +83,22 @@ def email_confirm(request, token):
     return Response({"message": "Email confirmed. Redirecting to Login"}, status=status.HTTP_200_OK)
 
 
+# SESSION + CSRF Functions
 def get_csrf(request):
-    pass
+    response = JsonResponse({"detail": "CSRF cookie set"})
+    response['X-CSRFToken'] = get_token(request)
+    return response
+
 
 def session(request):
-    pass
+    if not request.user.is_authenticated:
+        return JsonResponse({"isAuthenticated": False}, status=400)
+    
+    return JsonResponse({"isAuthenticated": True})
+
 
 def whoami(request):
-    pass
+    if not request.user.is_authenticated:
+        return JsonResponse({'isAuthenticated': False})
+    
+    return JsonResponse({'user': request.user.username})
