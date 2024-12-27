@@ -19,7 +19,7 @@ function App() {
       {/* Protected Routes */}
       {/* <Route element={<ProtectedRoutes />}> */}
       <Route path='/' element={<MainLayout />}>
-        <Route path='' element={<Home />} index/>
+        <Route path='' element={<Home shit={"My shit"} />} index/>
         <Route path='email-confirm/:token/' element={<EmailConfirm />}/>
         <Route path='test' element={<ChatMessagesSection isStandalone={true}/>} />
         <Route path='settings' element={<Settings />} />

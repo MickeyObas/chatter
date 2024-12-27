@@ -1,31 +1,28 @@
 import profile2 from '../../assets/images/profile2.png';
 import v_dots from '../../assets/images/v-dots2.png';
-import axiosInstance from '../../axios'; 
 import { useNavigate } from 'react-router-dom';
+import { fetchCSRFToken } from '../../utils';
 
 export default function InboxHeader(){
     const navigate = useNavigate();
 
-    /* const handleClick = async () => {
+    const handleClick = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/users', {
-                credentials: 'include'
+            const csrfToken = await fetchCSRFToken();
+            const response = await fetch('http://localhost:8000/api/users/', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    "X-CSRFToken": csrfToken
+                }
             });
             if(!response.ok){
-                console.log("Oh, my bad.")
+                const detail = await response.json();
+                console.log(detail);
             }else{
                 const data = await response.json();
                 console.log(data);
             }
-        }catch(err){
-            console.error(err);
-        }
-    } */
-
-    const handleClick = async () => {
-        try{
-            const response = await axiosInstance.get('api/users/');
-            console.log(response.data);
         }catch(err){
             console.error(err);
         }
@@ -34,7 +31,7 @@ export default function InboxHeader(){
     const handleLogout = async () => {
         try {
             const response = await fetch('http://localhost:8000/api/logout/', {
-                method: 'POST'
+                credentials: 'include',
             });
 
             if(!response.ok){
@@ -45,7 +42,7 @@ export default function InboxHeader(){
                 navigate('/login');
             }
         } catch(err){
-            console.err(err);
+            console.error(err);
         }
     }
 

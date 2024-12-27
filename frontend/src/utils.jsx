@@ -1,4 +1,5 @@
 import { useLocation, Outlet, Navigate } from "react-router-dom";
+import { BASE_URL } from "./constants";
 
 export const fetchWithAuth = async (url, options = {}) => {
     // Retrieve the access and refresh tokens
@@ -69,3 +70,24 @@ export const formatDate = (isoDate) => {
         day: 'numeric',
     });
 }
+
+// src/utils/fetchCsrfToken.js
+
+export const fetchCSRFToken = async () => {
+    try {
+        const response = await fetch(`${BASE_URL}/get-csrf/`, {
+            credentials: 'include', // Ensure cookies are included
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch CSRF token');
+        }
+
+        const csrfToken = response.headers.get('X-CSRFToken');
+
+        return csrfToken;
+
+    } catch (err) {
+        console.error('Error fetching CSRF token:', err);
+    }
+};

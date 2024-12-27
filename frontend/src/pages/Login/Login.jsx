@@ -60,26 +60,27 @@ export function Login(){
         };
 
         try {
-            /* const response = await fetch(`${BASE_URL}/login/`, {
+            const response = await fetch(`${BASE_URL}/login/`, {
                 method: 'POST',
                 headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
                 },
                 credentials: 'include',
                 body: JSON.stringify(loginDetails)
-            }); */
+            });
 
-            const response = await axiosInstance.post('api/login/', loginDetails);
+            // const response = await axiosInstance.post('api/login/', loginDetails);
 
             setLoading(false);
 
             if(response.status !== 200){
-                const err = response.data;
+                const err = await response.json();
                 console.log(err);
                 setError((prev) => ({...prev, credentials: err.error}));
             }else{
+                console.log(response.headers.get('X-CSRFToken'));
                 setError((prev) => ({...prev, credentials: ''}));
-                const data = response.data;
+                const data = await response.json();
                 // if(data.access){
                 if(data.user){
                     // localStorage.setItem('accessToken', data.access);
