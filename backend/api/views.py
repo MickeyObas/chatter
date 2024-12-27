@@ -2,6 +2,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import logout as django_logout
+
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+from django.http import JsonResponse
 
 from django.contrib.auth import authenticate
 from django.core.cache import cache
@@ -9,6 +15,44 @@ from django.core.cache import cache
 from accounts.models import CustomUser
 from accounts.serializers import UserSerializer
 
+
+# Custom Auth fot HTTPONLY cookies
+class CustomTokenObtainPairView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        refresh = response.data.get("refresh")
+        access = response.data.get("access")
+
+        # Set cookies
+        response.set_cookie(
+            "refresh_token",
+            refresh,
+            httponly=True,
+            secure=True,
+            samesite="Lax"
+        )
+        response.set_cookie(
+            "access_token",
+            access,
+            httponly=True,
+            secure=True,
+            samesite="Lax"
+        )
+
+        return response
+    
+
+class CustomLogoutView(APIView):
+    def post(self, request):
+        print(f"Logging out {request.user}")
+        response = JsonResponse({"message": "Logged out!"})
+        response.delete_cookie("refresh_token")
+        response.delete_cookie("access_token")
+        response.delete_cookie("csrftoken")
+        django_logout(request)
+        return response
 
 
 @api_view(['POST'])
@@ -19,7 +63,7 @@ def register(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 @api_view(['POST'])
 def login(request):
@@ -32,13 +76,14 @@ def login(request):
     user = authenticate(email=email, password=password)
 
     if user is not None:
+       
         if not user.is_verified:
             return Response({'error': 'Email is not verified. Please check your email to complete registration.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
+            response = Response({
+                # 'refresh': str(refresh),
+                # 'access': str(refresh.access_token),
                 'user': {
                     'id': user.id,
                     'email': user.email,
@@ -46,6 +91,24 @@ def login(request):
                     'last_name': user.last_name,
                 }
             })
+
+            # Set cookies
+            response.set_cookie(
+                "refresh_token",
+                str(refresh),
+                httponly=True,
+                samesite='Lax'
+            )
+
+            response.set_cookie(
+                "access_token",
+                str(refresh.access_token),
+                httponly=True,
+                samesite="Lax"
+            )
+
+            return response
+            
     else:
         return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -62,3 +125,13 @@ def email_confirm(request, token):
     cache.delete(token)
 
     return Response({"message": "Email confirmed. Redirecting to Login"}, status=status.HTTP_200_OK)
+
+
+def get_csrf(request):
+    pass
+
+def session(request):
+    pass
+
+def whoami(request):
+    pass

@@ -1,7 +1,54 @@
 import profile2 from '../../assets/images/profile2.png';
 import v_dots from '../../assets/images/v-dots2.png';
+import axiosInstance from '../../axios'; 
+import { useNavigate } from 'react-router-dom';
 
 export default function InboxHeader(){
+    const navigate = useNavigate();
+
+    /* const handleClick = async () => {
+        try {
+            const response = await fetch('http://localhost:8000/api/users', {
+                credentials: 'include'
+            });
+            if(!response.ok){
+                console.log("Oh, my bad.")
+            }else{
+                const data = await response.json();
+                console.log(data);
+            }
+        }catch(err){
+            console.error(err);
+        }
+    } */
+
+    const handleClick = async () => {
+        try{
+            const response = await axiosInstance.get('api/users/');
+            console.log(response.data);
+        }catch(err){
+            console.error(err);
+        }
+    }
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('http://localhost:8000/api/logout/', {
+                method: 'POST'
+            });
+
+            if(!response.ok){
+                console.log("Whoopsy Daisy")
+            }else{
+                const data = await response.json();
+                console.log(data);
+                navigate('/login');
+            }
+        } catch(err){
+            console.err(err);
+        }
+    }
+
     return (
         <div className='flex flex-col'>
             <div className='py-4 px-3.5 border-b flex items-center'>
@@ -23,8 +70,8 @@ export default function InboxHeader(){
                     </div>
                 </div>
                 <div className='ms-auto flex gap-x-2'>
-                    <button className='border border-slate-300 text-[11px] py-1.5 px-2.5 rounded-lg'>Archive</button>
-                    <button className='text-white text-[11px] py-1.5 px-2.5 rounded-lg bg-blue-700'>View Profile</button>
+                    <button className='border border-slate-300 text-[11px] py-1.5 px-2.5 rounded-lg' onClick={handleLogout}>Archive</button>
+                    <button className='text-white text-[11px] py-1.5 px-2.5 rounded-lg bg-blue-700' onClick={handleClick}>View Profile</button>
                     <img src={v_dots} alt="" className='h-4'/>
                 </div>
             </div>

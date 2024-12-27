@@ -4,6 +4,8 @@ import  Input  from "../../components/form/Input";
 import  Button  from "../../components/form/Button";
 import { BASE_URL } from "../../constants";
 
+import axiosInstance from "../../axios";
+
 export function Login(){
 
     const navigate = useNavigate();
@@ -58,26 +60,30 @@ export function Login(){
         };
 
         try {
-            const response = await fetch(`${BASE_URL}/login/`, {
+            /* const response = await fetch(`${BASE_URL}/login/`, {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(loginDetails)
-            });
+                },
+                credentials: 'include',
+                body: JSON.stringify(loginDetails)
+            }); */
+
+            const response = await axiosInstance.post('api/login/', loginDetails);
 
             setLoading(false);
 
-            if(!response.ok){
-                const err = await response.json();
+            if(response.status !== 200){
+                const err = response.data;
                 console.log(err);
                 setError((prev) => ({...prev, credentials: err.error}));
             }else{
-                setError((prev) => ({...prev, credentials: ''}))
-                const data = await response.json();
-                if(data.access){
-                    localStorage.setItem('accessToken', data.access);
-                    localStorage.setItem('refreshToken', data.refresh);
+                setError((prev) => ({...prev, credentials: ''}));
+                const data = response.data;
+                // if(data.access){
+                if(data.user){
+                    // localStorage.setItem('accessToken', data.access);
+                    // localStorage.setItem('refreshToken', data.refresh);
                     // login(data.user);
                     alert(`Welcome ${data.user.first_name} ${data.user.last_name}. TEHAHAHAHAHAHAHAHAHAHAHAHAHA`);
                     const from = location.state?.from || '/';
@@ -88,7 +94,8 @@ export function Login(){
             }
 
         }catch(err){
-            console.log(err);
+            setLoading(false);
+            console.error(err);
         }
     };
 

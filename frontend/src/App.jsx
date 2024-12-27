@@ -17,14 +17,14 @@ function App() {
     <Routes>
       
       {/* Protected Routes */}
-      <Route element={<ProtectedRoutes />}>
-        <Route path='/' element={<MainLayout />}>
-          <Route path='' element={<Home />} index/>
-          <Route path='email-confirm/:token/' element={<EmailConfirm />}/>
-          <Route path='test' element={<ChatMessagesSection isStandalone={true}/>} />
-          <Route path='settings' element={<Settings />} />
-        </Route>
+      {/* <Route element={<ProtectedRoutes />}> */}
+      <Route path='/' element={<MainLayout />}>
+        <Route path='' element={<Home />} index/>
+        <Route path='email-confirm/:token/' element={<EmailConfirm />}/>
+        <Route path='test' element={<ChatMessagesSection isStandalone={true}/>} />
+        <Route path='settings' element={<Settings />} />
       </Route>
+      {/* </Route> */}
       
       {/* Public Routes */}
       <Route path='register' element={<Register />}/>
