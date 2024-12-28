@@ -14,34 +14,6 @@ from django.core.cache import cache
 
 from accounts.models import CustomUser
 from accounts.serializers import UserSerializer
-
-
-# Custom Auth fot HTTPONLY cookies
-class CustomTokenObtainPairView(TokenObtainPairView):
-    permission_classes = [AllowAny]
-
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        refresh = response.data.get("refresh")
-        access = response.data.get("access")
-
-        # Set cookies
-        response.set_cookie(
-            "refresh_token",
-            refresh,
-            httponly=True,
-            secure=True,
-            samesite="Lax"
-        )
-        response.set_cookie(
-            "access_token",
-            access,
-            httponly=True,
-            secure=True,
-            samesite="Lax"
-        )
-
-        return response
     
 
 class CustomLogoutView(APIView):
@@ -82,8 +54,6 @@ def login(request):
         else:
             refresh = RefreshToken.for_user(user)
             response = Response({
-                # 'refresh': str(refresh),
-                # 'access': str(refresh.access_token),
                 'user': {
                     'id': user.id,
                     'email': user.email,
@@ -125,13 +95,3 @@ def email_confirm(request, token):
     cache.delete(token)
 
     return Response({"message": "Email confirmed. Redirecting to Login"}, status=status.HTTP_200_OK)
-
-
-def get_csrf(request):
-    pass
-
-def session(request):
-    pass
-
-def whoami(request):
-    pass
