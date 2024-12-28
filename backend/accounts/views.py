@@ -8,7 +8,7 @@ from .models import (
 from .serializers import UserSerializer
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def user_list(request):
 
     users = CustomUser.objects.all()

@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from django.core.cache import cache
 from django.middleware.csrf import get_token
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from accounts.models import CustomUser
 from accounts.serializers import UserSerializer
@@ -90,6 +91,7 @@ def get_csrf(request):
     return response
 
 
+@ensure_csrf_cookie
 def session(request):
     if not request.user.is_authenticated:
         return JsonResponse({"isAuthenticated": False}, status=400)

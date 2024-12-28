@@ -1,17 +1,29 @@
+import PropTypes from 'prop-types';
 import checklist from '../../assets/images/checklist.png';
 
 export default function SidebarLink({
     title="Link Title",
-    icon=checklist,
-    notificationCount=99
+    Icon,
+    path,
+    notificationCount=99,
 }){
     return (
-        <div className='flex items-center justify-between'>
+        <a 
+            href={path}        
+            className='flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer hover:bg-blue-400'>
             <div className='flex items-center'>
-                <img src={checklist} alt="" className='h-4'/>
+                <Icon />
                 <h2 className='ms-2 text-[13px]'>{title}</h2>
             </div>
             <div className='h-5 w-6 rounded-full bg-white border-[1.5px] border-slate-200 flex items-center justify-center text-[10px] px-2.5 py-1.5 text-slate-700'>{notificationCount}</div>
-        </div>
+        </a>
     )
+}
+
+
+SidebarLink.propTypes = {
+    title: PropTypes.string,
+    Icon: PropTypes.any,
+    notificationCount: PropTypes.number,
+    path: PropTypes.string
 }

@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import  Input  from "../../components/form/Input";
 import  Button  from "../../components/form/Button";
 import { BASE_URL } from "../../constants";
+import { useAuth } from "../../context/AuthContext.jsx";
+
 
 import axiosInstance from "../../axios";
 
 export function Login(){
+    const { setUser } = useAuth();
 
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
@@ -69,8 +72,6 @@ export function Login(){
                 body: JSON.stringify(loginDetails)
             });
 
-            // const response = await axiosInstance.post('api/login/', loginDetails);
-
             setLoading(false);
 
             if(response.status !== 200){
@@ -83,9 +84,7 @@ export function Login(){
                 const data = await response.json();
                 // if(data.access){
                 if(data.user){
-                    // localStorage.setItem('accessToken', data.access);
-                    // localStorage.setItem('refreshToken', data.refresh);
-                    // login(data.user);
+                    setUser(data.user);
                     alert(`Welcome ${data.user.first_name} ${data.user.last_name}. TEHAHAHAHAHAHAHAHAHAHAHAHAHA`);
                     const from = location.state?.from || '/';
                     navigate(from);

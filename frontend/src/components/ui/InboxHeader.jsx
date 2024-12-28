@@ -2,9 +2,12 @@ import profile2 from '../../assets/images/profile2.png';
 import v_dots from '../../assets/images/v-dots2.png';
 import { useNavigate } from 'react-router-dom';
 import { fetchCSRFToken } from '../../utils';
+import { useAuth } from '../../context/AuthContext';
 
 export default function InboxHeader(){
     const navigate = useNavigate();
+        const { user } = useAuth();
+        console.log(user);
 
     const handleClick = async () => {
         try {
@@ -55,7 +58,7 @@ export default function InboxHeader(){
                 <div className='flex flex-col'>
                     <div className='flex'>
                         <div className='flex flex-col ms-3.5'>
-                            <h2 className='text-sm font-semibold'>Samantha Somebody</h2>
+                            <h2 className='text-sm font-semibold'>{user ? user['first_name'] : 'Noname'}</h2>
                             <h3 className='text-[11px]'>@samanthasome1</h3>
                         </div>
                         <div>
