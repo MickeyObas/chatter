@@ -24,7 +24,6 @@ const EmailConfirm = () => {
           setMessage(err.error);
         }else{
             const data = await response.json();
-            console.log(data.message);
             setMessage(data.message);
             setTimeout(() => {
               navigate('/login');

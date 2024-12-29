@@ -13,10 +13,12 @@ import { HelpIcon } from '../../assets/icons/HelpIcon';
 import { IoSettingsOutline } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Sidebar(){
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
     const sidebarLinks = [
         {
             title: "Home",
@@ -49,6 +51,11 @@ export default function Sidebar(){
              path: "/"
          }
     ];
+
+    const handleLogoutClick = () => {
+        logout();
+        navigate('/login');
+    }
     
     return (
         <div className='border border-e-slate-200 py-4 px-4 h-screen w-[20%]'>
@@ -73,8 +80,8 @@ export default function Sidebar(){
                             notificationCount={sidebarLink.notificationCount}
                         />
                     ))}
-                    <div className='mt-auto flex flex-col gap-y-4'>
-                        <div className='flex items-center justify-between'>
+                    <div className='mt-auto flex flex-col'>
+                        <div className='flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer hover:bg-blue-400'>
                             <div className='flex items-center'>
                                 <IoSettingsOutline size={"20px"}/>
                                 <h2 className='ms-2 text-[13px]'>Settings</h2>
@@ -83,7 +90,10 @@ export default function Sidebar(){
                             99
                             </div>
                         </div>
-                        <div className='flex items-center justify-between'>
+                        <div 
+                            className='flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer hover:bg-blue-400'
+                            onClick={handleLogoutClick}
+                            >
                             <div className='flex items-center'>
                                 <TbLogout2 size={"20px"} />
                                 <h2 className='ms-2 text-[13px]'>Logout</h2>
@@ -95,8 +105,8 @@ export default function Sidebar(){
                         <div className='flex  border-[1.5px] border-slate-200 p-2 rounded-md mt-3'>
                             <img src={profile} alt="" className='h-7'/>
                             <div className='flex flex-col text-[11px] ms-2.5'>
-                                <h2>{user.first_name} {user.last_name}</h2>
-                                <h3>@{user.email.split('@')[0]}</h3>
+                                <h2>{user?.first_name} {user?.last_name}</h2>
+                                <h3>@{user?.email.split('@')[0]}</h3>
                             </div>
                         </div>
                     </div>

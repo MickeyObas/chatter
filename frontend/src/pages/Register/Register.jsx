@@ -37,7 +37,6 @@ export function Register(){
         e.preventDefault();
 
         if(!validate()){
-            console.log(password === password2);
             return;
         };
 
@@ -95,7 +94,6 @@ export function Register(){
                 setFirstName('');
                 setLastName(''); 
 
-                console.log(data)
                 displayRegSuccessToast();
             }
         } catch (err) {

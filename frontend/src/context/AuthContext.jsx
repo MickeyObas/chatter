@@ -32,6 +32,7 @@ export function AuthProvider({children}){
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         setUser(null);
+        
     }
 
     return (

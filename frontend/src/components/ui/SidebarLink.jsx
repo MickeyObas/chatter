@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import checklist from '../../assets/images/checklist.png';
 
 export default function SidebarLink({
     title="Link Title",

@@ -16,7 +16,6 @@ function getCSRFToken(){
         const cookie = cookies[i].trim();
         if(cookie.startsWith(name + "=")){
             const csrftoken = cookie.substring(name.length + 1);
-            console.log("Cookie: ", csrftoken);
             return csrftoken;
         };
     };

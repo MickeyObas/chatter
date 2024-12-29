@@ -3,10 +3,8 @@ import v_dots from '../../assets/images/v-dots2.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
+
 export default function InboxHeader(){
-    const navigate = useNavigate();
-    const { user } = useAuth();
-    console.log(user);
 
     return (
         <div className='flex flex-col'>
@@ -17,7 +15,7 @@ export default function InboxHeader(){
                 <div className='flex flex-col'>
                     <div className='flex'>
                         <div className='flex flex-col ms-3.5'>
-                            <h2 className='text-sm font-semibold'>Samantha Someone</h2>
+                            <h2 className='text-sm font-semibold'>Samantha Someonebody</h2>
                             <h3 className='text-[11px]'>@samanthasome1</h3>
                         </div>
                         <div>
