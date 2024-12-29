@@ -1,9 +1,12 @@
 import profile2 from '../../assets/images/profile2.png';
 import v_dots from '../../assets/images/v-dots2.png';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export default function InboxHeader(){
     const navigate = useNavigate();
+    const { user } = useAuth();
+    console.log(user);
 
     return (
         <div className='flex flex-col'>

@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import  Input  from "../../components/form/Input";
 import  Button  from "../../components/form/Button";
 import { BASE_URL } from "../../constants";
+import { useAuth } from "../../context/AuthContext";
 
 export function Login(){
 
+    const { login } = useAuth(); 
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -71,19 +73,13 @@ export function Login(){
 
             if(response.status !== 200){
                 const err = await response.json();
-                console.log(err);
+                console.error(err);
                 setError((prev) => ({...prev, credentials: err.error}));
             }else{
-                console.log(response.headers.get('X-CSRFToken'));
-                setError((prev) => ({...prev, credentials: ''}));
                 const data = await response.json();
-                if(data.user){
-                    alert(`Welcome ${data.user.first_name} ${data.user.last_name}. TEHAHAHAHAHAHAHAHAHAHAHAHAHA`);
-                    const from = location.state?.from || '/';
-                    navigate(from);
-                }else{
-                    confirm("Ship")
-                }
+                login(data)
+                const from = location.state?.from || '/';
+                navigate(from);
             }
 
         }catch(err){

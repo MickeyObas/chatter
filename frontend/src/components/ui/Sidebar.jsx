@@ -12,9 +12,11 @@ import { HelpIcon } from '../../assets/icons/HelpIcon';
 
 import { IoSettingsOutline } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
+import { useAuth } from '../../context/AuthContext';
 
 
 export default function Sidebar(){
+    const { user } = useAuth();
     const sidebarLinks = [
         {
             title: "Home",
@@ -90,11 +92,11 @@ export default function Sidebar(){
                             99
                             </div>
                         </div>
-                        <div className='flex border-[1.5px] border-slate-200 p-2 rounded-md mt-3'>
+                        <div className='flex  border-[1.5px] border-slate-200 p-2 rounded-md mt-3'>
                             <img src={profile} alt="" className='h-7'/>
                             <div className='flex flex-col text-[11px] ms-2.5'>
-                                <h2>Mickey Brave</h2>
-                                <h3>@mickey</h3>
+                                <h2>{user.first_name} {user.last_name}</h2>
+                                <h3>@{user.email.split('@')[0]}</h3>
                             </div>
                         </div>
                     </div>

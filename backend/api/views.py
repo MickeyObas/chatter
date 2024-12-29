@@ -53,31 +53,16 @@ def login(request):
             return Response({'error': 'Email is not verified. Please check your email to complete registration.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             refresh = RefreshToken.for_user(user)
-            response = Response({
-                'user': {
-                    'id': user.id,
-                    'email': user.email,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                }
-            })
-
-            # Set cookies
-            response.set_cookie(
-                "refresh_token",
-                str(refresh),
-                httponly=True,
-                samesite='Lax'
-            )
-
-            response.set_cookie(
-                "access_token",
-                str(refresh.access_token),
-                httponly=True,
-                samesite="Lax"
-            )
-
-            return response
+            return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+            }
+        }, status=status.HTTP_200_OK)
             
     else:
         return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
