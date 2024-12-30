@@ -10,6 +10,7 @@ import ChatMessagesSection from './components/ui/ChatMessagesSection.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
 import Settings from './pages/Settings/Settings.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
+import Contact from './pages/Contacts/Contact.jsx';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             <Route path='' element={<Home />} index/>
             <Route path='test' element={<ChatMessagesSection isStandalone={true}/>} />
             <Route path='settings' element={<Settings />} />
+            <Route path='contacts' element={<Contact />} />
           </Route>
         </Route>
         

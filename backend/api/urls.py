@@ -11,4 +11,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/', include('accounts.urls')),
     path('email-confirm/<str:token>/', views.email_confirm, name='email-confirm'),
+    path('contacts/', include('contacts.urls'))
 ]

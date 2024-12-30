@@ -30,7 +30,7 @@ export default function Sidebar(){
             title: "Contacts",
             icon: ContactIcon,
             notificationCount: 0,
-            path: "/"
+            path: "/contacts"
         },
         {
             title: "Groups",

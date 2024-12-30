@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function SidebarLink({
     title="Link Title",
@@ -6,11 +7,16 @@ export default function SidebarLink({
     path,
     notificationCount=99,
 }){
+
+    const navigate = useNavigate();
+
     return (
-        <a 
-            href={path}        
-            className='flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer hover:bg-blue-400'>
-            <div className='flex items-center'>
+        <a       
+            className='flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer hover:bg-blue-400'
+            onClick={() => navigate(path)}
+            >
+            <div className='flex items-center'
+            >
                 <Icon />
                 <h2 className='ms-2 text-[13px]'>{title}</h2>
             </div>
