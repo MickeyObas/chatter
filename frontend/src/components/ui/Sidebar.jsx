@@ -1,7 +1,5 @@
 import logo from '../../assets/images/logo.png';
 import profile from '../../assets/images/profile.png';
-import settings from '../../assets/images/settings.png';
-import notification from '../../assets/images/notification.png';
 import SidebarLink from './SidebarLink';
 
 import { HomeIcon } from '../../assets/icons/HomeIcon';
@@ -13,12 +11,13 @@ import { HelpIcon } from '../../assets/icons/HelpIcon';
 import { IoSettingsOutline } from "react-icons/io5";
 import { TbLogout2 } from "react-icons/tb";
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 
 export default function Sidebar(){
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const sidebarLinks = [
         {
             title: "Home",
@@ -36,19 +35,19 @@ export default function Sidebar(){
             title: "Groups",
             icon: GroupIcon,
             notificationCount: 0,
-            path: "/"
+            path: ""
         },
         {
             title: "Notifications",
             icon: NotificationIcon,
             notificationCount: 0,
-            path: "/"
+            path: ""
         },
          {
              title: "Help",
              icon: HelpIcon,
              notificationCount: 0,
-             path: "/"
+             path: ""
          }
     ];
 
@@ -65,7 +64,7 @@ export default function Sidebar(){
                     <h1 className='text-lg font-bold'>Chatter</h1>
                 </div>
                 {/* Links */}
-                <div className='flex flex-col mt-6 px-3 text-[12px] font-semibold h-full'>
+                <div className='flex flex-col mt-6 px-3 text-[12px] font-semibold h-full gap-y-1'>
                     {/* {Array(7).fill("_").map((link, idx) => (
                         <SidebarLink 
                             key={idx}

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export default function SidebarLink({
     title="Link Title",
@@ -9,10 +9,12 @@ export default function SidebarLink({
 }){
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const isActive = location.pathname == path;
 
     return (
         <a       
-            className='flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer hover:bg-blue-400'
+            className={`flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer ${isActive ? 'bg-blue-500' : 'hover:bg-blue-500'} `}
             onClick={() => navigate(path)}
             >
             <div className='flex items-center'

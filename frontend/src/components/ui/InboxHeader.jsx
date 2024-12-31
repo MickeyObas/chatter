@@ -15,7 +15,7 @@ export default function InboxHeader(){
                 <div className='flex flex-col'>
                     <div className='flex'>
                         <div className='flex flex-col ms-3.5'>
-                            <h2 className='text-sm font-semibold'>Samantha Someonebody</h2>
+                            <h2 className='text-sm font-semibold'>Samantha Somebody</h2>
                             <h3 className='text-[11px]'>@samanthasome1</h3>
                         </div>
                         <div>

@@ -5,7 +5,10 @@ from rest_framework.decorators import api_view, permission_classes
 from .models import (
     CustomUser
 )
-from .serializers import UserSerializer
+from .serializers import (
+    UserSerializer,
+    UserSummarySerializer
+)
 
 
 @api_view(['POST'])
@@ -25,4 +28,17 @@ def user_detail(request, pk):
     
     serializer = UserSerializer(user)
     
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def profile(request):
+    try:
+        user = request.user
+    except Exception as e:
+        return Response({'error': f'Could not get user data, {e}.'})
+    
+    serializer = UserSummarySerializer(user)
+
     return Response(serializer.data)

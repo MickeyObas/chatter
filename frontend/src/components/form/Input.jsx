@@ -8,7 +8,8 @@ export default function Input({
     placeholder = '',
     required = false,
     value,
-    errorMessage
+    errorMessage,
+    disabled=false
 }){
     return (
         <div className="flex flex-col">
@@ -19,7 +20,8 @@ export default function Input({
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                className={`w-full px-1.5 py-1.5 border rounded-md text-[13px] shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${ errorMessage ? 'border-red-500' : 'border-gray-300'}`}
+                disabled={disabled}
+                className={`w-full px-1.5 py-1.5 border rounded-md text-[13px] shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${ errorMessage ? 'border-red-500' : 'border-gray-300'} ${customClass && customClass}`}
                 />
                 {errorMessage && <p className="mt-1 text-xs leading-4 text-red-500">{errorMessage}</p>}
         </div>
@@ -37,5 +39,6 @@ Input.propTypes = {
         PropTypes.string,
         PropTypes.number
     ]),
-    errorMessage: PropTypes.string
+    errorMessage: PropTypes.string,
+    disabled: PropTypes.bool
 };

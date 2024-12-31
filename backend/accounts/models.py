@@ -31,6 +31,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=140)
     display_name = models.CharField(max_length=160, blank=True, null=True)
     status = models.CharField(max_length=10, choices=OnlineStatus.choices, default=OnlineStatus.OFFLINE)
+    status_text = models.CharField(max_length=255, blank=True, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)

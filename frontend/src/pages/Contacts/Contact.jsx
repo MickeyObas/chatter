@@ -10,6 +10,8 @@ function Contact() {
 
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedContactId, setSelectedContactId] = useState(null);
+    let selectedContact = contacts.find((contact) => contact.id === selectedContactId);
 
     useEffect(() => {
         const getContacts = async () => {
@@ -32,6 +34,10 @@ function Contact() {
 
     }, [])
 
+    const handleContactClick = (contactId) => {
+        setSelectedContactId(contactId);
+    }
+
   return (
     <div className="flex w-[80%]">
         <div className="w-[60%] flex flex-col px-3 py-4 border-e border-e-slate-300">
@@ -42,89 +48,23 @@ function Contact() {
             </div>
             {/* Contacts Container */}
             <div className='flex flex-col mt-3.5 gap-y-2 overflow-y-scroll px-1 h-'>
-                <div className='flex items-center py-1.5 px-2.5 bg-blue-500 text-white rounded-full'>
-                    <div className="">
-                        <img src={profile2} alt="Profile" className="w-10" />
-                    </div>
-                    <div className='flex flex-col ms-2.5'>
-                        <div className='flex'>
-                            <h2 className='text-sm'>Samantha Somebody</h2>
-                        </div>
-                        <p className='text-[10px] text-slate-200'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum blanditiis tempore ea.</p>
-                    </div>
-                    <div className='w-7 h-7 border border-slate-300 rounded-full flex items-center justify-center ms-auto'>
-                        <IoMdStarOutline size={"20px"}/>
-                    </div>
-                </div>
-                <div className='flex items-center py-1.5 px-2.5 rounded-full'>
-                        <div className="">
-                            <img src={profile2} alt="Profile" className="w-10" />
-                        </div>
-                        <div className='flex flex-col ms-2.5'>
-                            <div className='flex'>
-                                <h2 className='text-sm'>Samantha Somebody</h2>
-                            </div>
-                            <p className='text-[10px] text-slate-600'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum blanditiis tempore ea.</p>
-                        </div>
-                        <div className='w-7 h-7 border border-slate-300 rounded-full flex items-center justify-center ms-auto'>
-                            <IoMdStarOutline size={"20px"}/>
-                        </div>
-                    </div>
-                <div className='flex items-center py-1.5 px-2.5 rounded-full'>
-                        <div className="">
-                            <img src={profile2} alt="Profile" className="w-10" />
-                        </div>
-                        <div className='flex flex-col ms-2.5'>
-                            <div className='flex'>
-                                <h2 className='text-sm'>Samantha Somebody</h2>
-                            </div>
-                            <p className='text-[10px] text-slate-600'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum blanditiis tempore ea.</p>
-                        </div>
-                        <div className='w-7 h-7 border border-slate-300 rounded-full flex items-center justify-center ms-auto'>
-                            <IoMdStarOutline size={"20px"}/>
-                        </div>
-                    </div>
-                <div className='flex items-center py-1.5 px-2.5 rounded-full'>
-                        <div className="">
-                            <img src={profile2} alt="Profile" className="w-10" />
-                        </div>
-                        <div className='flex flex-col ms-2.5'>
-                            <div className='flex'>
-                                <h2 className='text-sm'>Samantha Somebody</h2>
-                            </div>
-                            <p className='text-[10px] text-slate-600'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum blanditiis tempore ea.</p>
-                        </div>
-                        <div className='w-7 h-7 border border-slate-300 rounded-full flex items-center justify-center ms-auto'>
-                            <IoMdStarOutline size={"20px"}/>
-                        </div>
-                    </div>
-                <div className='flex items-center py-1.5 px-2.5 rounded-full'>
-                        <div className="">
-                            <img src={profile2} alt="Profile" className="w-10" />
-                        </div>
-                        <div className='flex flex-col ms-2.5'>
-                            <div className='flex'>
-                                <h2 className='text-sm'>Samantha Somebody</h2>
-                            </div>
-                            <p className='text-[10px] text-slate-600'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum blanditiis tempore ea.</p>
-                        </div>
-                        <div className='w-7 h-7 border border-slate-300 rounded-full flex items-center justify-center ms-auto'>
-                            <IoMdStarOutline size={"20px"}/>
-                        </div>
-                    </div>
                 {loading ? (
                     <div>Loading...</div>
                 ) : (
                     contacts.map((contact, idx) => (
-                    <div key={idx} className='flex items-center py-1.5 px-2.5 rounded-full'>
-                        <div className="">
+                    <div 
+                        key={idx} 
+                        className={`flex items-center py-1.5 px-2.5 rounded-full cursor-pointer ${selectedContactId === contact.id ? 'bg-blue-500 text-white hover:bg-blue-500' : 'hover:bg-slate-100'}`}
+                        onClick={() => handleContactClick(contact.id)}
+                        >
+                        <div className="w-10">
                             <img src={profile2} alt="Profile" className="w-10" />
                         </div>
-                        <div className='flex flex-col ms-2.5'>
+                        <div className='flex flex-col ms-2.5 w-[80%]'>
                             <div className='flex'>
-                                <h2 className='text-sm'>Samantha Somebody</h2>
+                                <h2 className='text-sm'>{contact.contact_user.name}</h2>
                             </div>
-                            <p className='text-[10px] text-slate-600'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum blanditiis tempore ea.</p>
+                            <p className={`contact-status-text text-[10px] ${selectedContactId === contact.id ? 'text-slate-100' : 'text-slate-600'}`}>{contact.contact_user.status_text}</p>
                         </div>
                         <div className='w-7 h-7 border border-slate-300 rounded-full flex items-center justify-center ms-auto'>
                             <IoMdStarOutline size={"20px"}/>
@@ -136,25 +76,32 @@ function Contact() {
         </div>
         <div className="w-[40%] flex flex-col py-3.5 px-3.5">
         <h1 className='text-2xl text-center'>Contact Info</h1>
-            <div className='flex flex-col gap-y-2 items-center mt-12'>
-                <div className="">
-                    <img src={profile2} alt="Profile" className="w-32" />
+            {selectedContact ? (
+                <>
+                    <div className='flex flex-col gap-y-2 items-center mt-12'>
+                        <div className="">
+                            <img src={profile2} alt="Profile" className="w-32" />
+                        </div>
+                        <div className='font-semibold text-xl'>{selectedContact.contact_user.name}</div>
+                        <div>@{selectedContact.contact_user.email}</div>
+                    </div>
+                    <div className='flex flex-col gap-y-2.5 mt-5 px-4'>
+                        <div className='bg-slate-200 py-3 px-3 rounded-lg'>
+                            <p className='text-xs'>{selectedContact.contact_user.status_text}</p>
+                        </div>
+                        <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center'>
+                            <div className='text-xs'>Edit Contact</div>
+                        </div>
+                        <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center'>
+                            <div className='text-xs text-red-600'>Delete Contact</div>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <div className='flex items-center justify-center h-full'>
+                    <div className='text-center'>Select a contact to view their details.</div>
                 </div>
-                <div className='font-semibold text-xl'>Samantha Somebody</div>
-                <div>@samanthasome1</div>
-            </div>
-            {/* Extra Tabs Container? */}
-            <div className='flex flex-col gap-y-2.5 mt-5 px-4'>
-                <div className='bg-slate-200 py-3 px-3 rounded-lg'>
-                    <p className='text-xs'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Beatae natus illum iusto, odio saepe iure minus nobis quas enim id.</p>
-                </div>
-                <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center'>
-                    <div className='text-xs'>Edit Contact</div>
-                </div>
-                <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center'>
-                    <div className='text-xs text-red-600'>Delete Contact</div>
-                </div>
-            </div>
+            )}            
         </div>
     </div>
   )

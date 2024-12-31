@@ -62,3 +62,25 @@ class UserSerializer(serializers.ModelSerializer):
         cache.set(token, user.id, timeout=60*60*24)
         send_confirmation_email(user, token)
         return user
+
+
+class UserSummarySerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField(read_only=True) 
+    
+    class Meta:
+        model = CustomUser
+        fields = [
+            'name',
+            'email',
+            'display_name',
+            'profile_picture',
+            'status_text'
+        ]
+
+    def get_name(self, obj):
+        if obj.first_name and obj.last_name:
+            return f"{obj.first_name} {obj.last_name}"
+        elif obj.first_name:
+            return obj.first_name
+        elif obj.last_name:
+            return obj.last_name
