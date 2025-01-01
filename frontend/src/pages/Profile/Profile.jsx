@@ -8,12 +8,11 @@ import { BASE_URL } from "../../constants";
 import userIcon from "../../assets/images/user.png";
 
 function Profile() {
-
     const profilePicInputRef = useRef(null);
-    const [profilePic, setProfilePic] = useState(userIcon);
     const [selectedFile, setSelectedFile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [profile, setProfile] = useState({});
+    const [profilePic, setProfilePic] = useState(userIcon);
     const [displayName, setDisplayName] = useState('');
     const [status, setStatus] = useState('');
 
@@ -36,26 +35,26 @@ function Profile() {
             const reader = new FileReader();
             reader.onload = () => {
             setProfilePic(reader.result); 
-            console.log(reader.result);
-            console.log(file);
           };
           reader.readAsDataURL(file);
         }
       };
 
     const handleProfileUpload = async () => {
-        if(!selectedFile) return;
 
         const formData = new FormData();
-        formData.append('profilePic', selectedFile);
+
+        if(selectedFile){
+            formData.append('profile_picture', selectedFile);
+        };
+
+        formData.append('display_name', displayName);
+        formData.append('status_text', status);
 
         try {
             const response = await fetchWithAuth(`${BASE_URL}/users/profile/update/`, {
-                method: 'PUT',
+                method: 'PATCH',
                 body: formData,
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
             });
 
             if(!response.ok){
@@ -64,7 +63,6 @@ function Profile() {
                 console.log(error);
             } else{
                 const data = await response.json();
-                console.log(data);
             }
 
         } catch (err) {
@@ -76,13 +74,21 @@ function Profile() {
 
         const getProfile = async () => {
             try{
-                const response = await fetchWithAuth(`${BASE_URL}/users/profile/`);
+                const response = await fetchWithAuth(`${BASE_URL}/users/profile/`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
                 if(!response.ok){
                     console.log("Whoops, the response was not okay.");
                 }else{
                     const data = await response.json();
                     setProfile(data);
-                    console.log(data);
+                    setDisplayName(data.display_name || '');
+                    setStatus(data.status_text || '');
+                    setProfilePic(
+                        data.profile_picture ? `${BASE_URL.replace('api', '')}${data.profile_picture}` : userIcon
+                    );
                 }
             }catch(err){
                 console.error("Error, ", err);
@@ -127,8 +133,8 @@ function Profile() {
                         <Input 
                             label="Display Name"
                             customClass="w-4/5"
-                            value={displayName}
                             onChange={handleDisplayNameChange}
+                            value={displayName}
                         />
                         <p className="text-[11px] text-slate-400 mt-1">Your name may appear around Chatter where you contribute or are mentioned. You can change it at any time.</p>
                     </div>

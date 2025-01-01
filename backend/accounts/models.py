@@ -5,15 +5,24 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 from .managers import CustomUserManager
+from PIL import Image
 
 
 def validate_profile_picture(image):
     max_size_kb = 1024  # 1 MB
-    if image.size > max_size_kb * 1024:
-        raise ValidationError("Image size exceeds 1 MB.")
-    if not image.content_type.startswith("image/"):
-        raise ValidationError("Invalid image format.")
 
+    if hasattr(image, 'size') and image.size > max_size_kb * 1024:
+        raise ValidationError("Image size exceeds 1 MB.")
+    
+    if hasattr(image, 'content_type') and not image.content_type.startswith("image/"):
+        raise ValidationError("Invalid image format.")
+    
+    try:
+        img = Image.open(image)
+        img.verify()
+    except (IOError, SyntaxError):
+        raise ValidationError("The uploaded file is not a valid image file.")
+    
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     class OnlineStatus(models.TextChoices):

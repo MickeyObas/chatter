@@ -16,7 +16,11 @@ function Contact() {
     useEffect(() => {
         const getContacts = async () => {
             try{
-                const response = await fetchWithAuth(`${BASE_URL}/contacts/`);
+                const response = await fetchWithAuth(`${BASE_URL}/contacts/`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
                 if(!response.ok){
                     console.log("Contacts could not be fetched properly.")
                 }else{

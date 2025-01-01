@@ -7,7 +7,8 @@ from .models import (
 )
 from .serializers import (
     UserSerializer,
-    UserSummarySerializer
+    UserSummarySerializer,
+    UserProfileUpdateSerializer
 )
 
 
@@ -44,20 +45,20 @@ def profile(request):
     return Response(serializer.data)
 
 
-@api_view(['PUT'])
+@api_view(['PATCH'])
 @parser_classes([parsers.MultiPartParser])
 def profile_update(request):
     try:
         user = request.user 
 
-        if 'profilePic' in request.FILES:
-            print("Vamoss")
+        serializer = UserProfileUpdateSerializer(user, data=request.data, context={'request': request}, partial=True)
 
-            # Assuming you're handling the profile picture here
-            # Save the picture or process it as needed
-
-        return Response({"message": "Profile updated successfully!"})
-
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response({"message": "Profile updated successfully!"})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
     except Exception as e:
         print(e)
         return Response({'error': f'Could not update user data, {e}.'})

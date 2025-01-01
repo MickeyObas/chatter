@@ -54,7 +54,6 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Image size exceeds 1 MB")
         if not image.content_type.startswith("image/"):
             raise serializers.ValidationError("Invald image format")
-        return image
 
     def create(self, validated_data):
         user =  CustomUser.objects.create_user(**validated_data)
@@ -62,6 +61,46 @@ class UserSerializer(serializers.ModelSerializer):
         cache.set(token, user.id, timeout=60*60*24)
         send_confirmation_email(user, token)
         return user
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.ImageField(required=False)
+    display_name = serializers.CharField(max_length=160, required=False)
+    status_text = serializers.CharField(max_length=255, required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            'display_name',
+            'profile_picture',
+            'status_text'
+        ]
+
+    def validate_display_name(self, display_name):
+        return display_name.strip()
+    
+    def validate_status_text(self, status_text):
+        return status_text.strip()
+
+    def validate_profile_picture(self, image):
+        if image.size > 1024 * 1024:
+            raise serializers.ValidationError("Image size exceeds 1 MB")
+        if not image.content_type.startswith("image/"):
+            raise serializers.ValidationError("Invald image format")
+        return image
+    
+    def update(self, instance, validated_data):
+        print(validated_data)        
+        profile_picture = validated_data.get('profile_picture', None)
+        if profile_picture:
+            instance.profile_picture = profile_picture
+
+        instance.display_name = validated_data.get('display_name')
+        instance.status_text = validated_data.get('status_text')
+
+        instance.save()
+
+        return instance
 
 
 class UserSummarySerializer(serializers.ModelSerializer):

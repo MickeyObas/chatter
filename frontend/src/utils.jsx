@@ -10,7 +10,6 @@ export const fetchWithAuth = async (url, options = {}) => {
     const headers = {
         ...options.headers,
         'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
     };
 
     // Make the fetch request
