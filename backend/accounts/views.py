@@ -1,6 +1,6 @@
-from rest_framework import status, permissions
+from rest_framework import status, permissions, parsers
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 
 from .models import (
     CustomUser
@@ -42,3 +42,22 @@ def profile(request):
     serializer = UserSummarySerializer(user)
 
     return Response(serializer.data)
+
+
+@api_view(['PUT'])
+@parser_classes([parsers.MultiPartParser])
+def profile_update(request):
+    try:
+        user = request.user 
+
+        if 'profilePic' in request.FILES:
+            print("Vamoss")
+
+            # Assuming you're handling the profile picture here
+            # Save the picture or process it as needed
+
+        return Response({"message": "Profile updated successfully!"})
+
+    except Exception as e:
+        print(e)
+        return Response({'error': f'Could not update user data, {e}.'})

@@ -32,7 +32,7 @@ Input.propTypes = {
     label: PropTypes.string.isRequired,
     type: PropTypes.string,
     customClass: PropTypes.string,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
     placeholder: PropTypes.string,
     required: PropTypes.bool,
     value: PropTypes.oneOfType([
