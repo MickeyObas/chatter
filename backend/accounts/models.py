@@ -5,11 +5,12 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 from .managers import CustomUserManager
+
 from PIL import Image
 
 
 def validate_profile_picture(image):
-    max_size_kb = 1024  # 1 MB
+    max_size_kb = 1024  
 
     if hasattr(image, 'size') and image.size > max_size_kb * 1024:
         raise ValidationError("Image size exceeds 1 MB.")

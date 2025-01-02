@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Internal Apps
     'accounts.apps.AccountsConfig',
+    'chats.apps.ChatsConfig',
     'contacts.apps.ContactsConfig',
     'messaging.apps.MessagingConfig',
     # External Apps
