@@ -3,16 +3,14 @@ import smile from '../../assets/images/smile.png';
 
 import { useState } from 'react';
 import { useChat } from '../../context/ChatContext';
-import { useAuth } from '../../context/AuthContext';
 import PropTypes from 'prop-types';
 import { fetchWithAuth } from '../../utils';
 import { BASE_URL } from '../../constants';
 
-export default function InboxMessageTextbox({chat}){
+export default function InboxMessageTextbox({reff}){
     
     const [content, setContent] = useState('');
-    const { chatId, setChatId } = useChat();
-    const { user } = useAuth();
+    const { chatId, chat, setChat } = useChat();
 
     const handleContentChage = (e) => {
         setContent(e.target.value);
@@ -42,14 +40,28 @@ export default function InboxMessageTextbox({chat}){
                 console.log(error);
             }else{
                 const data = await response.json();
-                console.log(data);
                 setContent('');
+                reff.current.scrollToBottom();
+                console.log(data);
+                setChat((prev) => (
+                    {
+                        ...prev,
+                        messages: [...prev.messages, data]
+                    }
+                ))
             }
 
         } catch(err){
             console.log(err);
         }
     }
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); // Prevents a new line
+            handleSendMessageClick(); // Send the message
+        }
+    };
 
     return (
         <div className='px-3.5 mt-auto'>
@@ -59,6 +71,7 @@ export default function InboxMessageTextbox({chat}){
                     id="" 
                     value={content}
                     onChange={handleContentChage}
+                    onKeyDown={handleKeyPress}
                     className='border-none rounded-lg w-full resize-none outline-none p-2 text-[11px]' placeholder='Send a message' 
                     rows={1}></textarea>
                 <div className='flex items-center justify-end gap-x-2 me-3 mb-2.5'>
@@ -75,5 +88,5 @@ export default function InboxMessageTextbox({chat}){
 }
 
 InboxMessageTextbox.propTypes = {
-    chat: PropTypes.object
+    reff: PropTypes.any
 }

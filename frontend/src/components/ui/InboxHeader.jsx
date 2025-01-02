@@ -8,8 +8,6 @@ import { getProfilePicture } from '../../utils';
 
 export default function InboxHeader({chat}){
 
-    console.log("InboxHeader", chat);
-
     return (
         <div className='flex flex-col'>
             <div className='py-4 px-3.5 border-b flex items-center'>

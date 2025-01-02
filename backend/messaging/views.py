@@ -25,13 +25,14 @@ def create_message(request):
         'content': request.data.get('content')
     }
 
-    print(data)
-
     serializer = CreateMessageSerializer(data=data)
 
     if serializer.is_valid(raise_exception=True):
-        serializer.save()
-        return Response({'message': 'Message created'}, status=status.HTTP_201_CREATED)
+        new_mesage = serializer.save()
+        return Response(
+            MessageSerializer(new_mesage).data,
+            status=status.HTTP_201_CREATED
+        )
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

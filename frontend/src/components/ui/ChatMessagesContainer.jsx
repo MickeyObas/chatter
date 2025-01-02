@@ -21,7 +21,6 @@ export default function ChatMessagesContainer(){
                     console.log("Could not fetch chats.");
                 }else{
                     const data = await response.json();
-                    console.log(data);
                     setChats(data);
                 }
 
