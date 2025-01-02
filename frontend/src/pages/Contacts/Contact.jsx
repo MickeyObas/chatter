@@ -3,7 +3,7 @@ import profile2 from '../../assets/images/profile2.png';
 import StarIconOutline from '../../assets/icons/StarIconOutline';
 import { IoMdStarOutline } from "react-icons/io";
 import { useEffect, useState } from 'react';
-import { fetchWithAuth } from '../../utils';
+import { fetchWithAuth, getProfilePicture } from '../../utils';
 import { BASE_URL } from '../../constants';
 
 function Contact() {
@@ -61,8 +61,8 @@ function Contact() {
                         className={`flex items-center py-1.5 px-2.5 rounded-full cursor-pointer ${selectedContactId === contact.id ? 'bg-blue-500 text-white hover:bg-blue-500' : 'hover:bg-slate-100'}`}
                         onClick={() => handleContactClick(contact.id)}
                         >
-                        <div className="w-10">
-                            <img src={profile2} alt="Profile" className="w-10" />
+                        <div className={`w-10 h-10 flex items-center justify-center rounded-[50%] overflow-hidden ${selectedContactId === contact.id ? 'outline outline-[1.5px]' : ''}`}>
+                            <img src={getProfilePicture(contact.contact_user.profile_picture)} alt="Profile" className="w-full h-full object-cover" />
                         </div>
                         <div className='flex flex-col ms-2.5 w-[80%]'>
                             <div className='flex'>
@@ -83,8 +83,8 @@ function Contact() {
             {selectedContact ? (
                 <>
                     <div className='flex flex-col gap-y-2 items-center mt-12'>
-                        <div className="">
-                            <img src={profile2} alt="Profile" className="w-32" />
+                        <div className="w-32 h-32 flex items-center rounded-[50%] overflow-hidden">
+                            <img src={getProfilePicture(selectedContact.contact_user.profile_picture)} alt="Profile" className="w-full h-full object-cover"/>
                         </div>
                         <div className='font-semibold text-xl'>{selectedContact.contact_user.name}</div>
                         <div>@{selectedContact.contact_user.email}</div>

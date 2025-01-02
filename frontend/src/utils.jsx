@@ -1,5 +1,6 @@
 import { useLocation, Outlet, Navigate } from "react-router-dom";
 import { BASE_URL } from "./constants";
+import profile2 from './assets/images/profile2.png';;
 
 export const fetchWithAuth = async (url, options = {}) => {
     // Retrieve the access and refresh tokens
@@ -90,3 +91,52 @@ export const fetchCSRFToken = async () => {
         console.error('Error fetching CSRF token:', err);
     }
 };
+
+
+export const getProfilePicture = (profilePicture) => {
+    return profilePicture 
+        ? BASE_URL.replace('api', '') + profilePicture
+        : profile2
+
+}
+
+
+export function timeAgo(isoDateString) {
+    const date = new Date(isoDateString); // Parse the ISO string into a Date object
+    const now = new Date(); // Current date and time
+    const seconds = Math.floor((now - date) / 1000); // Difference in seconds
+    const intervals = [
+        { label: "year", seconds: 31536000 },
+        { label: "month", seconds: 2592000 },
+        { label: "week", seconds: 604800 },
+        { label: "day", seconds: 86400 },
+        { label: "hour", seconds: 3600 },
+        { label: "minute", seconds: 60 },
+        { label: "second", seconds: 1 },
+    ];
+
+    for (const interval of intervals) {
+        const count = Math.floor(seconds / interval.seconds);
+        if (count >= 1) {
+            return `${count} ${interval.label}${count > 1 ? "s" : ""} ago`;
+        }
+    }
+
+    return "just now";
+}
+
+export function formatDatetime(datetimeStr) {
+    // Parse the datetime string into a Date object
+    const date = new Date(datetimeStr);
+
+    // Define options for formatting
+    const options = {
+        weekday: 'long',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true, 
+    };
+
+    // Format the date
+    return date.toLocaleString('en-US', options);
+}

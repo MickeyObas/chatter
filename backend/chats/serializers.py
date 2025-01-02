@@ -6,12 +6,17 @@ from messaging.serializers import MessageSerializer
 
 
 class ChatSerializer(serializers.ModelSerializer):
+    messages = MessageSerializer(many=True, read_only=True)
+    owner = UserSummarySerializer()
+    user = UserSummarySerializer()
+    
     class Meta: 
         model = Chat
         fields = [
             'id',
             'owner',
             'user',
+            'messages',
             'created_at',
             'updated_at'
         ]

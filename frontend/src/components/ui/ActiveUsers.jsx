@@ -10,7 +10,7 @@ function ActiveUser(){
 
 export default function ActiveUsers(){
     return (
-        <div className='flex self-start flex-col mt-6'>
+        <div className='flex self-start flex-col mt-6 h-[20%]'>
             <h1 className='text-[13px] font-semibold'>Active</h1>
             <div className='flex mt-4 gap-x-3'>
                 {Array(7).fill('_').map((user, idx) => (

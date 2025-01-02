@@ -9,6 +9,7 @@ from .models import (
     Chat
 )
 from .serializers import (
+    ChatSerializer,
     ChatDisplaySerializer
 )
 
@@ -27,3 +28,18 @@ def chat_list(request):
     except Exception as e:
         print(e)
         return Response({'error': str(e)})
+    
+
+@api_view(['GET'])
+def chat_detail(request, pk):
+    try:
+        chat = Chat.objects.get(
+            id=pk,
+            owner=request.user
+        )
+    except Chat.DoesNotExist:
+        return Response({"message": "Chat does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = ChatSerializer(chat)
+
+    return Response(serializer.data)

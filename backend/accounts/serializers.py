@@ -109,6 +109,7 @@ class UserSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = [
+            'id',
             'name',
             'email',
             'display_name',
