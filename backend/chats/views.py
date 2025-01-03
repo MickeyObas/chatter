@@ -8,6 +8,7 @@ from rest_framework.decorators import (
 from .models import (
     Chat
 )
+from contacts.models import Contact
 from .serializers import (
     ChatSerializer,
     ChatDisplaySerializer
@@ -17,6 +18,7 @@ from .serializers import (
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def chat_list(request):
+    print(request.query_params)
     try:
         user = request.user
         user_chats = Chat.order_by_latest_message(user)
@@ -43,3 +45,29 @@ def chat_detail(request, pk):
     serializer = ChatSerializer(chat)
 
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def chat_detail_by_contact(request, pk):
+    try:
+        contact = Contact.objects.get(id=pk)
+
+        chat, created = Chat.objects.get_or_create(
+            owner=request.user,
+            user=contact.contact_user
+        )
+
+        if created:
+            print(f"Creating Chat for user:{request.user} + contact:{contact.contact_user.id}")
+
+        serializer = ChatSerializer(chat)
+
+        return Response(serializer.data)
+    
+    except Contact.DoesNotExist:
+        return Response({'message': 'Contact does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    
+    except Chat.DoesNotExist:
+        return Response({'message': 'Chat does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+    

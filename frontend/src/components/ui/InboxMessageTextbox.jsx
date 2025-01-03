@@ -1,14 +1,18 @@
 import options from '../../assets/images/options.png';
 import smile from '../../assets/images/smile.png';
-
-import { useState } from 'react';
+import { 
+    useState, 
+    useRef, 
+    useEffect, 
+    forwardRef, 
+    useImperativeHandle
+} from 'react';
 import { useChat } from '../../context/ChatContext';
 import PropTypes from 'prop-types';
 import { fetchWithAuth } from '../../utils';
 import { BASE_URL } from '../../constants';
 
-export default function InboxMessageTextbox({reff}){
-    
+const InboxMessageTextbox = forwardRef(({reff}, messageTextAreaRef) => {
     const [content, setContent] = useState('');
     const { chatId, chat, setChat } = useChat();
 
@@ -16,7 +20,7 @@ export default function InboxMessageTextbox({reff}){
         setContent(e.target.value);
     }
 
-    const handleSendMessageClick = async (e) => {
+    const handleSendMessageClick = async () => {
         const data = {
             content: content,
             chat_id: chatId,
@@ -67,6 +71,7 @@ export default function InboxMessageTextbox({reff}){
         <div className='px-3.5 mt-auto'>
             <div className='border-[1.5px] flex flex-col rounded-lg'>
                 <textarea 
+                    ref={messageTextAreaRef}
                     name="" 
                     id="" 
                     value={content}
@@ -78,15 +83,19 @@ export default function InboxMessageTextbox({reff}){
                     <img src={smile} alt="" className='h-4'/>
                     <img src={options} alt="" className='h-4'/>
                     <button 
-                        className='text-white text-[11px] py-2 px-4 rounded-lg bg-blue-700 flex items-center justify-center'
+                        className='text-white text-[11px] py-2 px-4 rounded-lg bg-blue-700 flex items-center justify-center hover:bg-blue-600'
                         onClick={handleSendMessageClick}
                         >Send</button>
                 </div>
             </div>
         </div>
     )
-}
+})
+
+InboxMessageTextbox.displayName = 'InbocMessageTextbox';
 
 InboxMessageTextbox.propTypes = {
     reff: PropTypes.any
 }
+
+export default InboxMessageTextbox;

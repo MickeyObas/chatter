@@ -1,10 +1,11 @@
 import searchIcon from '../../assets/images/search.png';
-import profile2 from '../../assets/images/profile2.png';
-import StarIconOutline from '../../assets/icons/StarIconOutline';
 import { IoMdStarOutline } from "react-icons/io";
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchWithAuth, getProfilePicture } from '../../utils';
 import { BASE_URL } from '../../constants';
+import { useAuth } from '../../context/AuthContext';
+import { useChat } from '../../context/ChatContext';
 
 function Contact() {
 
@@ -12,6 +13,10 @@ function Contact() {
     const [loading, setLoading] = useState(true);
     const [selectedContactId, setSelectedContactId] = useState(null);
     let selectedContact = contacts.find((contact) => contact.id === selectedContactId);
+    const { user } = useAuth();
+    const { setChat, setChatId } = useChat();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getContacts = async () => {
@@ -40,6 +45,33 @@ function Contact() {
 
     const handleContactClick = (contactId) => {
         setSelectedContactId(contactId);
+    }
+
+    const handleSendMessageClick = async () => {
+        // Get or create chat for contact 
+        try {
+            const response = await fetchWithAuth(`${BASE_URL}/chats/contact/${selectedContactId}/`, {
+                method: 'GET',
+            });
+
+            if(!response.ok){
+                console.log("Whoops")
+            }else{
+                const data = await response.json();
+                console.log(data);
+                // Set chat as context 
+                setChat(data);
+                localStorage.setItem('chat', JSON.stringify(data));
+                // Set ChatID in context
+                setChatId(data.id);
+                localStorage.setItem('chatId', JSON.stringify(data.id));
+
+                navigate('/');
+            }
+
+        } catch(err){
+            console.error(err);
+        }
     }
 
   return (
@@ -90,13 +122,19 @@ function Contact() {
                         <div>@{selectedContact.contact_user.email}</div>
                     </div>
                     <div className='flex flex-col gap-y-2.5 mt-5 px-4'>
-                        <div className='bg-slate-200 py-3 px-3 rounded-lg'>
-                            <p className='text-xs'>{selectedContact.contact_user.status_text}</p>
+                        <div className='bg-slate-200 py-3 px-3 rounded-lg h-[4em] max-h-[4em] overflow-y-auto flex items-center'>
+                            <p className='text-xs py-1'>{selectedContact.contact_user.status_text}</p>
                         </div>
-                        <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center'>
+                        <div 
+                            className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center mb-5 cursor-pointer hover:bg-slate-300'
+                            onClick={handleSendMessageClick}
+                            >
+                            <div className='text-xs text-blue-500'>Send Message</div>
+                        </div>
+                        <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center cursor-pointer hover:bg-slate-300'>
                             <div className='text-xs'>Edit Contact</div>
                         </div>
-                        <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center'>
+                        <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center cursor-pointer hover:bg-slate-300'>
                             <div className='text-xs text-red-600'>Delete Contact</div>
                         </div>
                     </div>

@@ -2,13 +2,14 @@ import InboxMessagesContainer from './InboxMessagesContainer';
 import InboxMessageTextbox from './InboxMessageTextbox';
 import InboxHeader from './InboxHeader';
 
-import { useEffect, useState, useRef, forwardRef} from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useChat } from '../../context/ChatContext';
 import { fetchWithAuth } from '../../utils';
 import { BASE_URL } from '../../constants';
 
 export default function InboxMessageSection(){
     const ref = useRef(null);
+    const messageTextAreaRef = useRef(null);
     const { chat } = useChat();
     const [loading, setLoading] = useState(false);
 
@@ -20,9 +21,9 @@ export default function InboxMessageSection(){
                 {/* Header */}
                 <InboxHeader chat={chat}/>
                 {/* Chat Container */}
-                <InboxMessagesContainer chat={chat} ref={ref}/>
+                <InboxMessagesContainer chat={chat} ref={ref} messageTextAreaRef={messageTextAreaRef}/>
                 {/* Chat Textbox */}
-                <InboxMessageTextbox chat={chat} reff={ref}/>
+                <InboxMessageTextbox chat={chat} reff={ref} ref={messageTextAreaRef}/>
             </div>
         </div>
     )

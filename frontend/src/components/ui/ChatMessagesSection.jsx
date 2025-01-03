@@ -16,7 +16,7 @@ export default function ChatMessagesSection({ isStandalone }){
                 <ActiveUsers />
                 <div className='flex flex-col mt-6 self-start w-full h-[70%]'>
                     <div className='flex items-center w-full mb-3'>
-                        <h1 className='text-[13px] font-semibold'>Messages</h1>
+                        <h1 className='text-[13px] font-semibold'>Chats</h1>
                         <div className='h-5 w-6 rounded-full bg-white border-[1.5px] border-slate-200 flex items-center justify-center text-[10px] px-2.5 py-1.5 text-slate-700 ms-2'>99</div>
                         <div className='p-1.5 border rounded-lg flex items-center justify-center ms-auto'>
                             <img src={write} alt="" className='h-4'/>

@@ -1,14 +1,21 @@
-import { useEffect, useRef, useImperativeHandle, forwardRef, useState, useLayoutEffect } from 'react';
+import { useEffect, useRef, useImperativeHandle, forwardRef, useLayoutEffect } from 'react';
 import InboxMessage from './InboxMessage';
 import PropTypes from 'prop-types';
 
-const InboxMessagesContainer = forwardRef(({chat}, ref) => {
+const InboxMessagesContainer = forwardRef(({chat, messageTextAreaRef}, ref) => {
     const user = chat.user;
     const messagesEndRef = useRef(null);
 
     useLayoutEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
     }, [chat.messages]);
+
+    useEffect(() => {
+        if(messageTextAreaRef.current){
+            console.log("Resetting focus");
+            messageTextAreaRef.current.focus();
+        }
+    });
 
     const scrollToBottom = () => {
         setTimeout(() => {
@@ -44,7 +51,8 @@ const InboxMessagesContainer = forwardRef(({chat}, ref) => {
 }
 )
 InboxMessagesContainer.propTypes = {
-    chat: PropTypes.object.isRequired
+    chat: PropTypes.object.isRequired,
+    messageTextAreaRef: PropTypes.any
 }
 
 InboxMessagesContainer.displayName = "InboxMessagesContainer";

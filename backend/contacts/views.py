@@ -24,3 +24,14 @@ def contact_list(request):
 
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+def contact_detail(request, pk):
+    try:
+        contact = Contact.objects.get(id=pk)
+    except Contact.DoesNotExist:
+        return Response({'message': 'Contact does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = ContactSerializer(contact)
+
+    return Response(serializer.data)

@@ -1,6 +1,6 @@
 import { useLocation, Outlet, Navigate } from "react-router-dom";
 import { BASE_URL } from "./constants";
-import profile2 from './assets/images/profile2.png';;
+import defaultProfilePicture from './assets/images/user-2.png';;
 
 export const fetchWithAuth = async (url, options = {}) => {
     // Retrieve the access and refresh tokens
@@ -96,7 +96,7 @@ export const fetchCSRFToken = async () => {
 export const getProfilePicture = (profilePicture) => {
     return profilePicture 
         ? BASE_URL.replace('api', '') + profilePicture
-        : profile2
+        : defaultProfilePicture
 
 }
 

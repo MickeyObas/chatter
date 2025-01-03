@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import (
     api_view,
@@ -12,6 +12,7 @@ from .serializers import (
 
 
 @api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
 def create_message(request):
 
     data = {
