@@ -6,6 +6,7 @@ from django.db.models import Max
 class Chat(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='chats')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    last_read_message = models.ForeignKey('messaging.Message', on_delete=models.SET_NULL, null=True, blank=True, related_name='last_read_message_chat')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
