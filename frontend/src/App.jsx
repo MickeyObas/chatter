@@ -27,9 +27,10 @@ function App() {
             <Route path='/' element={<MainLayout />}>
               <Route path='' element={<Home />} index/>
               <Route path='contacts' element={<Contact />} />
+              <Route path='profile/:userId/' element={<Profile />} />
               <Route path='test' element={<ChatMessagesSection isStandalone={true}/>} />
               <Route path='settings' element={<Settings />} />
-              <Route path='settings/profile' element={<Profile />} />
+              <Route path='settings/profile/' element={<Profile />} />
             </Route>
           </Route>
           

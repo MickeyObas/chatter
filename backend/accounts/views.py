@@ -12,7 +12,7 @@ from .serializers import (
 )
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def user_list(request):
     print(f"{request.user} is getting all users")
     users = CustomUser.objects.all()

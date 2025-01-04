@@ -31,7 +31,7 @@ const InboxMessagesContainer = forwardRef(({chat, messageTextAreaRef}, ref) => {
     }, []);
 
     return (
-        <div className='flex flex-col p-4 gap-y-3.5 overflow-y-scroll mb-2 h-full w-full overflow-x-hidden'>
+        <div className='flex flex-col p-4 gap-y-3.5 overflow-y-auto mb-2 h-full w-full overflow-x-hidden'>
             {/* {Array(9).fill("_").map((inboxMessage, idx) => (
                 <InboxMessage key={idx} userIsSender={idx%2===0} />
             ))} */}

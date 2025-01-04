@@ -75,15 +75,20 @@ function Contact() {
     }
 
   return (
-    <div className="flex w-[80%]">
-        <div className="w-[60%] flex flex-col px-3 py-4 border-e border-e-slate-300">
+    <div className="flex w-[80%] h-full">
+        <div className="w-[60%] flex flex-col px-3 py-4 border-e border-e-slate-300 h-full">
             <h2 className='mb-2.5'>Contacts</h2>
             <div className='flex items-center border-[1.4px] px-2 py-0.5 rounded-lg w-full'>
                 <img src={searchIcon} alt="" className='h-3'/>
                 <input type="text" className='py-1 px-1.5 rounded-e-lg text-xs border-none outline-none w-full' placeholder='Search my contacts'/>
             </div>
             {/* Contacts Container */}
-            <div className='flex flex-col mt-3.5 gap-y-2 overflow-y-scroll px-1 h-'>
+            <div className='flex flex-col mt-3.5 gap-y-2 overflow-y-auto px-1 h-full'>
+                {contacts.length === 0 && !loading && (
+                    <div className='flex items-center justify-center h-full'>
+                        <h1>No contacts yet.</h1>
+                    </div>
+                )}
                 {loading ? (
                     <div>Loading...</div>
                 ) : (

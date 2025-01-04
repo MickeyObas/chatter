@@ -85,9 +85,9 @@ export default function Sidebar(){
                                 <IoSettingsOutline size={"20px"}/>
                                 <h2 className='ms-2 text-[13px]'>Settings</h2>
                             </div>
-                            <div className='h-5 w-6 rounded-full bg-white border-[1.5px] border-slate-200 flex items-center justify-center text-[10px] px-2.5 py-1.5 text-slate-700'>
+                            {/* <div className='h-5 w-6 rounded-full bg-white border-[1.5px] border-slate-200 flex items-center justify-center text-[10px] px-2.5 py-1.5 text-slate-700'>
                             99
-                            </div>
+                            </div> */}
                         </div>
                         <div 
                             className='flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer hover:bg-blue-400'
@@ -97,9 +97,9 @@ export default function Sidebar(){
                                 <TbLogout2 size={"20px"} />
                                 <h2 className='ms-2 text-[13px]'>Logout</h2>
                             </div>
-                            <div className='h-5 w-6 rounded-full bg-white border-[1.5px] border-slate-200 flex items-center justify-center text-[10px] px-2.5 py-1.5 text-slate-700'>
+                            {/* <div className='h-5 w-6 rounded-full bg-white border-[1.5px] border-slate-200 flex items-center justify-center text-[10px] px-2.5 py-1.5 text-slate-700'>
                             99
-                            </div>
+                            </div> */}
                         </div>
                         <div className='flex  border-[1.5px] border-slate-200 p-2 rounded-md mt-3'>
                             <img src={profile} alt="" className='h-7'/>

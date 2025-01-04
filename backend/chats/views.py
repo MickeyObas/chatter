@@ -22,6 +22,7 @@ def chat_list(request):
     try:
         user = request.user
         user_chats = Chat.order_by_latest_message(user)
+        print(user_chats)
 
         serializer = ChatDisplaySerializer(user_chats, many=True)
 
@@ -62,7 +63,12 @@ def chat_detail_by_contact(request, pk):
 
         serializer = ChatSerializer(chat)
 
-        return Response(serializer.data)
+        response =  Response(serializer.data)
+
+        # Was the chat instance created from contct + send message click?
+        response.data['was_generated'] = created
+    
+        return response
     
     except Contact.DoesNotExist:
         return Response({'message': 'Contact does not exist'}, status=status.HTTP_404_NOT_FOUND)
@@ -71,3 +77,21 @@ def chat_detail_by_contact(request, pk):
         return Response({'message': 'Chat does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     
+@api_view(['PATCH'])
+def set_last_read_message(request, pk):
+    try:
+        chat = Chat.objects.get(
+            id=pk,
+            owner=request.user
+        )
+
+        chat.last_read_message = chat.messages.latest()
+        chat.save()
+
+        return Response({'message': 'Last read message set successfully'})
+    
+    except Chat.DoesNotExist:
+        return Response({'message': 'Chat does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    
+    except Exception as e:
+        return Response({'error': str(e)})

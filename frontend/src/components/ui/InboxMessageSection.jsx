@@ -13,7 +13,11 @@ export default function InboxMessageSection(){
     const { chat } = useChat();
     const [loading, setLoading] = useState(false);
 
-    if (!chat) return <div>Select chat</div>;
+    if (!chat) return (
+        <div className='flex w-[68%] justify-center items-center'>
+            <p>Select a message to begin chatting.</p>
+        </div>
+    );
     
     return (
         <div className='h-screen pt-1 pb-4 w-[68%]'>

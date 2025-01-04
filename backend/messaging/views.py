@@ -52,14 +52,20 @@ def create_message(request):
 
     if owner_serializer.is_valid(raise_exception=True) and recipient_serializer.is_valid(raise_exception=True):
         
-        # Save both message instances, but return data from owner instance
+        # Save both message instances, but return data ONLY from owner instance
         new_mesage = owner_serializer.save()
         recipient_serializer.save()
 
-        return Response(
+        # Set new_message as last_read_message for the owner's chat
+        owner_chat.last_read_message = new_mesage
+        owner_chat.save()
+
+        response = Response(
             MessageSerializer(new_mesage).data,
             status=status.HTTP_201_CREATED
         )
+
+        return response
     
     return Response(owner_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

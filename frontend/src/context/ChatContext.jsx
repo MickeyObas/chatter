@@ -12,6 +12,7 @@ export function ChatProvider({ children }){
         localStorage.getItem('chat') ? JSON.parse(localStorage.getItem('chat')) : null
     );
     const [loading, setLoading] = useState(true);
+    const [chats, setChats] = useState([]);
 
     useEffect(() => {
         if(!chatId) return;
@@ -44,8 +45,37 @@ export function ChatProvider({ children }){
 
     }, [chatId]);
 
+    useEffect(() => {
+        const getChats = async () => {
+            try {
+                const response = await fetchWithAuth(`${BASE_URL}/chats/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if(!response.ok){
+                    console.log("Could not fetch chats.");
+                }else{
+                    const data = await response.json();
+                    setChats(data);
+                    console.log("Chatssssss, ", data)
+                }
+
+            } catch (err){
+                console.log(err);
+            } finally {
+                setLoading(false);
+            };
+        };
+
+        getChats();
+
+    }, [chats.length]);
+
     return (
-        <ChatContext.Provider value={{chatId, setChatId, chat, setChat}}>
+        <ChatContext.Provider value={{chatId, setChatId, chat, setChat, chats, setChats}}>
             {children}
         </ChatContext.Provider>
     )

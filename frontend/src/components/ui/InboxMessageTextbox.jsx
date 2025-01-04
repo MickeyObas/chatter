@@ -2,10 +2,7 @@ import options from '../../assets/images/options.png';
 import smile from '../../assets/images/smile.png';
 import { 
     useState, 
-    useRef, 
-    useEffect, 
     forwardRef, 
-    useImperativeHandle
 } from 'react';
 import { useChat } from '../../context/ChatContext';
 import PropTypes from 'prop-types';
@@ -14,7 +11,7 @@ import { BASE_URL } from '../../constants';
 
 const InboxMessageTextbox = forwardRef(({reff}, messageTextAreaRef) => {
     const [content, setContent] = useState('');
-    const { chatId, chat, setChat } = useChat();
+    const { chatId, chat, setChat, chats, setChats } = useChat();
 
     const handleContentChage = (e) => {
         setContent(e.target.value);
@@ -52,6 +49,18 @@ const InboxMessageTextbox = forwardRef(({reff}, messageTextAreaRef) => {
                         ...prev,
                         messages: [...prev.messages, data]
                     }
+                ));
+                setChats((prev) => (
+                    prev.map((chat) => {
+                        if(chat.id === chatId){
+                            return {
+                                ...chat,
+                                latest_message: data
+                            }
+                        }else{
+                            return chat;
+                        }
+                    })
                 ))
             }
 

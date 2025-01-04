@@ -2,4 +2,8 @@ from django.contrib import admin
 
 from .models import Message
 
-admin.site.register(Message)
+
+class MessageModelAdmin(admin.ModelAdmin):
+    list_display = ['id', 'sender', 'recipient', 'content', 'created_at']
+
+admin.site.register(Message, MessageModelAdmin)

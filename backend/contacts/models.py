@@ -16,6 +16,7 @@ class Contact(models.Model):
 
     class Meta:
         unique_together = ('user', 'contact_user')
+        ordering = ['contact_user__email']
 
     def __str__(self):
         return f"{self.user.email} -> {self.contact_user.email}"

@@ -1,12 +1,15 @@
-import profile2 from '../../assets/images/profile2.png';
 import v_dots from '../../assets/images/v-dots2.png';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import PropTypes from 'prop-types';
 import { getProfilePicture } from '../../utils';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function InboxHeader({chat}){
+    const navigate = useNavigate();
+
+    const handledViewProfileClick = () => {
+        navigate(`/profile/${chat.user.id}`);
+    }
 
     return (
         <div className='flex flex-col'>
@@ -21,16 +24,26 @@ export default function InboxHeader({chat}){
                             <h3 className='text-[11px]'>@{chat.user.email.split('@')[0]}</h3>
                         </div>
                         <div>
-                            <div className='rounded-full bg-white border-[1.5px] border-slate-300 flex items-center justify-center text-[10px] px-1 text-slate-700 ms-2 gap-x-2'>
+                            {chat.user.status === 'ONLINE' ? (
+                                <div className='rounded-full bg-white border-[1.5px] border-slate-300 flex items-center justify-center text-[10px] px-1 text-slate-700 ms-2 gap-x-2'>
                                 <div className='bg-green-600 w-1.5 h-1.5 rounded-full'></div>
                                 <h2>Online</h2>
                             </div>
+                            ) : (
+                                <div className='rounded-full bg-white border-[1.5px] border-slate-300 flex items-center justify-center text-[10px] px-1 text-slate-700 ms-2 gap-x-2'>
+                                <div className='bg-red-600 w-1.5 h-1.5 rounded-full'></div>
+                                <h2>Offline</h2>
+                            </div>
+                            )}
                         </div>
                     </div>
                 </div>
                 <div className='ms-auto flex gap-x-2'>
                     <button className='border border-slate-300 text-[11px] py-1.5 px-2.5 rounded-lg'>Archive</button>
-                    <button className='text-white text-[11px] py-1.5 px-2.5 rounded-lg bg-blue-700'>View Profile</button>
+                    <button 
+                        className='text-white text-[11px] py-1.5 px-2.5 rounded-lg bg-blue-700'
+                        onClick={handledViewProfileClick}
+                        >View Profile</button>
                     <img src={v_dots} alt="" className='h-4'/>
                 </div>
             </div>

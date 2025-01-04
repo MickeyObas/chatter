@@ -19,6 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
             'password',
             'display_name',
             'profile_picture',
+            'status_text',
             'status',
             'last_seen',
             'deleted_at'
@@ -113,6 +114,7 @@ class UserSummarySerializer(serializers.ModelSerializer):
             'name',
             'email',
             'display_name',
+            'status',
             'profile_picture',
             'status_text'
         ]

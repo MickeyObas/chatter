@@ -13,11 +13,24 @@ class Chat(models.Model):
     def __str__(self):
         return f"{self.owner.email}'s Chat with {self.user}"
     
+    def has_unread_message(self):
+        if not self.messages.exists():
+            return False
+
+        if not self.last_read_message and self.messages.exists():
+            return True
+        
+        return self.messages.filter(created_at__gt=self.last_read_message.created_at).exists()
+    
     @classmethod
     def order_by_latest_message(cls, user):
-        return cls.objects.filter(owner=user).annotate(
-            latest_message_time=Max('messages__created_at')
-        ).order_by('-latest_message_time')
+        try:
+            return cls.objects.filter(owner=user).annotate(
+                latest_message_time=Max('messages__created_at')
+            ).order_by('-latest_message_time')
+        except Exception as e:
+            print("The issue is here", e)
+            return cls.objects.none()
     
     class Meta:
         unique_together = ['owner', 'user']

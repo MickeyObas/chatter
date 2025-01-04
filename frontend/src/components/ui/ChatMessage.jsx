@@ -1,21 +1,49 @@
 import profile from '../../assets/images/profile.png';
+import { BASE_URL } from '../../constants';
 import { useChat } from '../../context/ChatContext';
-import { getProfilePicture, timeAgo } from '../../utils';
+import { fetchWithAuth, getProfilePicture, timeAgo } from '../../utils';
 import PropTypes from 'prop-types';
-
+import { useState } from 'react';
 
 export default function ChatMessage({ chatmessage }){
 
     const { setChatId } = useChat();
+    const [hasUnread, setHasUnread] = useState(
+        chatmessage.has_unread_message
+    );
 
-    const handleChatClick = (chatId) => {
+    const handleChatClick = async (chatId) => {
         setChatId(chatId);
         localStorage.setItem('chatId', chatId);
+
+        // If message has no unread message, return
+        if(!hasUnread){
+            console.log(hasUnread);
+            console.log("This message has no unread messge")
+            return;
+        } 
+        // Set message as read
+        try {
+            const response = await fetchWithAuth(`${BASE_URL}/chats/${chatId}/set-last-read-message/`, {
+                method: 'PATCH',
+            });
+            
+            if(!response.ok){
+                const error = await response.json();
+                console.log(error);
+            }else{
+                setHasUnread(false);
+                const data = await response.json();
+                console.log(data);
+            }
+        }catch(err){
+            console.log(err);
+        }
     }
 
     return (
         <div 
-            className='flex flex-col p-1'
+            className={`flex flex-col p-1 py-2.5 cursor-pointer hover:bg-slate-100 ${hasUnread ? 'bg-[#F5F5F5]' : ''}`}
             onClick={() => handleChatClick(chatmessage.id)}
             >
             <div className='flex text-[11px] items-center'>
@@ -31,9 +59,14 @@ export default function ChatMessage({ chatmessage }){
                     )}</div>
             </div>
             <div className='mt-2.5 ps-5'>
-                <p className='text-[11px] leading-4 message-content-display'>{
-                    chatmessage.latest_message?.content ? chatmessage.latest_message.content : ''
-                    }</p>
+                <div className='flex justify-between'>
+                    <p className='text-[11px] leading-4 message-content-display'>{
+                        chatmessage.latest_message?.content ? chatmessage.latest_message.content : ''
+                        }</p>
+                    {hasUnread && (
+                        <div className='w-1.5 h-1.5 rounded-[50%] bg-green-500 me-2'></div>
+                    )}    
+                </div>
             </div>
         </div>
     )
