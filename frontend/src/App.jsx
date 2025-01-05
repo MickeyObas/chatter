@@ -15,6 +15,9 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { ChatProvider} from './context/ChatContext.jsx';
 import Contact from './pages/Contacts/Contact.jsx';
 import Profile from './pages/Profile/Profile.jsx';
+import Group from './pages/Group/Group.jsx';
+import Notifications from './pages/Notification/Notifications.jsx';
+import Help from './pages/Help/Help.jsx';
 
 
 function App() {
@@ -29,7 +32,9 @@ function App() {
               <Route path='contacts' element={<Contact />} />
               <Route path='profile/:userId/' element={<Profile />} />
               <Route path='test' element={<ChatMessagesSection isStandalone={true}/>} />
-              <Route path='settings' element={<Settings />} />
+              <Route path='groups' element={<Group />} />
+              <Route path='notifications' element={<Notifications />} />
+              <Route path='help' element={<Help />} />
               <Route path='settings/profile/' element={<Profile />} />
             </Route>
           </Route>

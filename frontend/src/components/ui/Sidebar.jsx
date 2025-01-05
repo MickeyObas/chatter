@@ -35,19 +35,19 @@ export default function Sidebar(){
             title: "Groups",
             icon: GroupIcon,
             notificationCount: 0,
-            path: ""
+            path: "/groups"
         },
         {
             title: "Notifications",
             icon: NotificationIcon,
             notificationCount: 0,
-            path: ""
+            path: "/notifications"
         },
          {
              title: "Help",
              icon: HelpIcon,
              notificationCount: 0,
-             path: ""
+             path: "/help"
          }
     ];
 
@@ -56,6 +56,11 @@ export default function Sidebar(){
         navigate('/login');
     }
     
+    const handleSettingsClick = () => {
+        console.log("Settings Clicked!!!");
+        navigate('/settings/profile/');
+    }
+
     return (
         <div className='border border-e-slate-200 py-4 px-4 h-screen w-[20%]'>
             <div className='flex flex-col h-full'>
@@ -81,7 +86,10 @@ export default function Sidebar(){
                     ))}
                     <div className='mt-auto flex flex-col'>
                         <div className='flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer hover:bg-blue-400'>
-                            <div className='flex items-center'>
+                            <div 
+                                className='flex items-center'
+                                onClick={handleSettingsClick}
+                                >
                                 <IoSettingsOutline size={"20px"}/>
                                 <h2 className='ms-2 text-[13px]'>Settings</h2>
                             </div>
