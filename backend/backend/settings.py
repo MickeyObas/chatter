@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     # External Apps
     'rest_framework',
     'corsheaders',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -173,3 +174,13 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True  # Allow credentials (cookies) to be sent
 
+# Redis
+ASGI_APPLICATION = 'backend.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}

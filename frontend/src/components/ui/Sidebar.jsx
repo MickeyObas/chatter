@@ -85,10 +85,12 @@ export default function Sidebar(){
                         />
                     ))}
                     <div className='mt-auto flex flex-col'>
-                        <div className='flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer hover:bg-blue-400'>
+                        <div 
+                            className='flex items-center justify-between rounded-lg py-2.5 px-1 cursor-pointer hover:bg-blue-400'
+                            onClick={handleSettingsClick}
+                            >
                             <div 
                                 className='flex items-center'
-                                onClick={handleSettingsClick}
                                 >
                                 <IoSettingsOutline size={"20px"}/>
                                 <h2 className='ms-2 text-[13px]'>Settings</h2>
