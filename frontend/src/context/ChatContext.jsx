@@ -60,7 +60,6 @@ export function ChatProvider({ children }){
                 }else{
                     const data = await response.json();
                     setChats(data);
-                    console.log("Chatssssss, ", data)
                 }
 
             } catch (err){

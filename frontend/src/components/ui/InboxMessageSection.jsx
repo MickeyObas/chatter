@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useChat } from '../../context/ChatContext';
 import { fetchWithAuth } from '../../utils';
 import { BASE_URL } from '../../constants';
+import { useAuth } from '../../context/AuthContext';
 
 // Emoji stuff
 import data from '@emoji-mart/data';
@@ -13,13 +14,16 @@ import Picker from '@emoji-mart/react';
 
 
 export default function InboxMessageSection(){
+    const { user } = useAuth();
     const ref = useRef(null);
     const messageTextAreaRef = useRef(null);
-    const { chat } = useChat();
+    const { chat, chatId, setChat, setChats } = useChat();
     const [loading, setLoading] = useState(false);
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState('');
+
+    const chatSocket = useRef(null);
 
     const handleEmojiOptionClick = () => {
         setShowEmojiPicker(true);
@@ -34,6 +38,41 @@ export default function InboxMessageSection(){
     const handleEmojiClick = (emoji) => {
         setSelectedEmoji(emoji.native);
     }
+
+     // When chat.user changes, open ws connection to 1-1 room
+    useEffect(() => {
+        chatSocket.current = new WebSocket(
+            `ws://localhost:8000/ws/chat/${user.id}/${chat.user.id}/`
+        );
+
+        chatSocket.current.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log("Incoming", data);
+
+            /* setChat((prev) => (
+                {
+                    ...prev,
+                    messages: [...prev.messages, data]
+                }
+            ));
+            setChats((prev) => (
+                prev.map((chat) => {
+                    if(chat.id === chatId){
+                        return {
+                            ...chat,
+                            latest_message: data
+                        }
+                    }else{
+                        return chat;
+                    }
+                })
+            )) 
+                */
+
+        };
+
+    }, [chat.user])
+
 
     if (!chat) return (
         <div className='flex w-[68%] justify-center items-center'>
@@ -65,6 +104,7 @@ export default function InboxMessageSection(){
                     handleEmojiOptionClick={handleEmojiOptionClick} handleClickOutsideEmojiBox={handleClickOutsideEmojiBox}
                     selectedEmoji={selectedEmoji}
                     clearEmoji={() => setSelectedEmoji('')}
+                    chatSocket={chatSocket}
                     />
             </div>
         </div>

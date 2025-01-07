@@ -67,7 +67,6 @@ function Profile() {
                 }else{
                     const data = await response.json();
                     setProfile(data);
-                    console.log("Profile, ", data);
                 }
             }catch(err){
                 console.log(err);

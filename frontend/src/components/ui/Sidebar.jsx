@@ -57,7 +57,6 @@ export default function Sidebar(){
     }
     
     const handleSettingsClick = () => {
-        console.log("Settings Clicked!!!");
         navigate('/settings/profile/');
     }
 

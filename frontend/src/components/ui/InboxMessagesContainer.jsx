@@ -12,14 +12,15 @@ const InboxMessagesContainer = forwardRef(({chat, messageTextAreaRef}, ref) => {
 
     useEffect(() => {
         if(messageTextAreaRef.current){
-            console.log("Resetting focus");
             messageTextAreaRef.current.focus();
         }
     });
 
+    // When chat.user changes, open ws connection to 1-1 room
+    
+
     const scrollToBottom = () => {
         setTimeout(() => {
-            console.log("scrolling to bottom");
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
         }, 50)
     };

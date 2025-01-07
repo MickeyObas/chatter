@@ -22,7 +22,6 @@ export default function ChatMessagesContainer(){
                     console.log(error);
                 }else{
                     const data = await response.json();
-                    console.log(data);
                 }
             }catch(err){
                 console.log(err);

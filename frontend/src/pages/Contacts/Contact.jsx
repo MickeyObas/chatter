@@ -58,7 +58,6 @@ function Contact() {
                 console.log("Whoops")
             }else{
                 const data = await response.json();
-                console.log(data);
                 // Set chat as context 
                 setChat(data);
                 localStorage.setItem('chat', JSON.stringify(data));

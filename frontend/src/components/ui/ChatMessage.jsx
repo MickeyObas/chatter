@@ -34,7 +34,6 @@ export default function ChatMessage({ chatmessage }){
             }else{
                 setHasUnread(false);
                 const data = await response.json();
-                console.log(data);
             }
         }catch(err){
             console.log(err);

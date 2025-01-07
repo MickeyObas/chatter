@@ -18,6 +18,7 @@ import Profile from './pages/Profile/Profile.jsx';
 import Group from './pages/Group/Group.jsx';
 import Notifications from './pages/Notification/Notifications.jsx';
 import Help from './pages/Help/Help.jsx';
+import Test from './components/ui/Test.jsx';
 
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
               <Route path='' element={<Home />} index/>
               <Route path='contacts' element={<Contact />} />
               <Route path='profile/:userId/' element={<Profile />} />
-              <Route path='test' element={<ChatMessagesSection isStandalone={true}/>} />
+              <Route path='test' element={<Test />} />
               <Route path='groups' element={<Group />} />
               <Route path='notifications' element={<Notifications />} />
               <Route path='help' element={<Help />} />

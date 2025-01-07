@@ -5,12 +5,13 @@ import {
     useRef,
     forwardRef, 
     callFunc,
-    useEffect
+    useEffect,
 } from 'react';
 import { useChat } from '../../context/ChatContext';
 import PropTypes from 'prop-types';
 import { fetchWithAuth } from '../../utils';
-import { BASE_URL } from '../../constants';
+import { BASE_URL } from '../../constants'
+import { useAuth } from '../../context/AuthContext';
 
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
@@ -20,11 +21,13 @@ const InboxMessageTextbox = forwardRef(({
     reff,
     handleEmojiOptionClick,
     selectedEmoji,
-    clearEmoji
+    clearEmoji,
+    chatSocket
 }, messageTextAreaRef) => {
     const [content, setContent] = useState('');
     const { chatId, chat, setChat, chats, setChats } = useChat();
     const emojiRef = useRef(null);
+    const { user } = useAuth();
 
     useEffect(() => {
        if(selectedEmoji){
@@ -45,50 +48,18 @@ const InboxMessageTextbox = forwardRef(({
         const data = {
             content: content,
             chat_id: chatId,
-            recipient_id: chat.user.id
+            recipient_id: chat.user.id,
+            sender_id: user.id
         };
 
-        try {
-            const response = await fetchWithAuth(`${BASE_URL}/messages/`, {
-               method: 'POST',
-               body: JSON.stringify(data),
-               headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-
-            if(!response.ok){
-                console.log("Failed to send message");
-                const error = await response.json();
-                console.log(error);
-            }else{
-                const data = await response.json();
-                setContent('');
-                reff.current.scrollToBottom();
-                console.log(data);
-                setChat((prev) => (
-                    {
-                        ...prev,
-                        messages: [...prev.messages, data]
-                    }
-                ));
-                setChats((prev) => (
-                    prev.map((chat) => {
-                        if(chat.id === chatId){
-                            return {
-                                ...chat,
-                                latest_message: data
-                            }
-                        }else{
-                            return chat;
-                        }
-                    })
-                ))
-            }
-
-        } catch(err){
+        try{
+            chatSocket.current.send(JSON.stringify(data))
+        }catch(err){
             console.log(err);
+        }finally{
+            setContent('');
         }
+
     }
 
     const handleKeyPress = (e) => {
