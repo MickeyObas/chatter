@@ -40,7 +40,7 @@ function Profile() {
                     setDisplayName(data.display_name || '');
                     setStatus(data.status_text || '');
                     setProfilePic(
-                        data.profile_picture ? `${BASE_URL.replace('api', '')}${data.profile_picture}` : userIcon
+                        data.profile_picture ? `${BASE_URL.replace('/api', '')}${data.profile_picture}` : userIcon
                     );
                 }
             }catch(err){

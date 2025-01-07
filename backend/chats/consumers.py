@@ -38,8 +38,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         print("ROOM NAME", self.room_group_name)
-        
-        await self.send(text_data=json.dumps({"room_name": self.room_name}))
 
     async def disconnect(self, close_code):
         # Remove the WebSocket connection from the room group

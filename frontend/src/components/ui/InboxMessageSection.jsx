@@ -41,37 +41,56 @@ export default function InboxMessageSection(){
 
      // When chat.user changes, open ws connection to 1-1 room
     useEffect(() => {
-        chatSocket.current = new WebSocket(
-            `ws://localhost:8000/ws/chat/${user.id}/${chat.user.id}/`
-        );
 
-        chatSocket.current.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log("Incoming", data);
-
-            /* setChat((prev) => (
-                {
-                    ...prev,
-                    messages: [...prev.messages, data]
-                }
-            ));
-            setChats((prev) => (
-                prev.map((chat) => {
-                    if(chat.id === chatId){
-                        return {
-                            ...chat,
-                            latest_message: data
-                        }
-                    }else{
-                        return chat;
+        const openConnection = async () => {
+            chatSocket.current = new WebSocket(
+                `ws://localhost:8000/ws/chat/${user.id}/${chat.user.id}/`
+            );
+    
+            chatSocket.current.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log("Incoming", data);
+    
+                setChat((prev) => (
+                    {
+                        ...prev,
+                        messages: [...prev.messages, data]
                     }
-                })
-            )) 
-                */
+                ));
+                
+                setChats((prev) => {
 
+                    if(prev.length === 0){
+                        console.log("No previous chats")
+                        return [data]
+                    }
+                    
+                    return (
+                    prev.map((chat) => {
+                        if(chat.id === chatId){
+                            return {
+                                ...chat,
+                                latest_message: data
+                            }
+                        }else{
+                            return chat;
+                        }
+                    })
+                )}) 
+            };
         };
 
-    }, [chat.user])
+        if (chat){
+            openConnection();
+        }
+
+        return () => {
+            if (chatSocket.current) {
+                chatSocket.current.close();
+            }
+        };
+
+    }, [chatId, chat, user])
 
 
     if (!chat) return (

@@ -95,7 +95,7 @@ export const fetchCSRFToken = async () => {
 
 export const getProfilePicture = (profilePicture) => {
     return profilePicture 
-        ? BASE_URL.replace('api', '') + profilePicture
+        ? BASE_URL.replace('/api', '') + profilePicture
         : defaultProfilePicture
 
 }

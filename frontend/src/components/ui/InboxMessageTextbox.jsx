@@ -44,6 +44,7 @@ const InboxMessageTextbox = forwardRef(({
     const handleSendMessageClick = async () => {
 
         if(!content.trim()) return;
+        if(!chatSocket.current) return;
 
         const data = {
             content: content,

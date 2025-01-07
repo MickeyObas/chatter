@@ -91,6 +91,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
         return image
     
     def update(self, instance, validated_data):
+        print(validated_data)        
         profile_picture = validated_data.get('profile_picture', None)
         if profile_picture:
             instance.profile_picture = profile_picture

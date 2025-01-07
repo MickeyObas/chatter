@@ -62,6 +62,7 @@ function Contact() {
                 setChat(data);
                 localStorage.setItem('chat', JSON.stringify(data));
                 // Set ChatID in context
+                console.log(data);
                 setChatId(data.id);
                 localStorage.setItem('chatId', JSON.stringify(data.id));
 
