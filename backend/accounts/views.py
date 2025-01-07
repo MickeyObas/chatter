@@ -14,7 +14,6 @@ from .serializers import (
 
 @api_view(['GET'])
 def user_list(request):
-    print(f"{request.user} is getting all users")
     users = CustomUser.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
@@ -60,5 +59,4 @@ def profile_update(request):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     except Exception as e:
-        print(e)
         return Response({'error': f'Could not update user data, {e}.'})

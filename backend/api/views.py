@@ -18,7 +18,6 @@ from accounts.serializers import UserSerializer
 
 class CustomLogoutView(APIView):
     def post(self, request):
-        print(f"Logging out {request.user}")
         response = JsonResponse({"message": "Logged out!"})
         response.delete_cookie("refresh_token")
         response.delete_cookie("access_token")

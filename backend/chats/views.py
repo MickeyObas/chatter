@@ -18,11 +18,9 @@ from .serializers import (
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def chat_list(request):
-    print(request.query_params)
     try:
         user = request.user
         user_chats = Chat.order_by_latest_message(user)
-        print(user_chats)
 
         serializer = ChatDisplaySerializer(user_chats, many=True)
 
