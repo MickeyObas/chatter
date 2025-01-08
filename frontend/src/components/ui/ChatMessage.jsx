@@ -3,45 +3,47 @@ import { BASE_URL } from '../../constants';
 import { useChat } from '../../context/ChatContext';
 import { fetchWithAuth, getProfilePicture, timeAgo } from '../../utils';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ChatMessage({ chatmessage }){
+    const [lastMessageIsRead, setLastMessageIsRead] = useState(
+        chatmessage.latest_message.is_read
+    )
+
+    useEffect(() => {
+        setLastMessageIsRead(chatmessage.latest_message.is_read);
+    }, [chatmessage.latest_message])
 
     const { setChatId } = useChat();
-    const [hasUnread, setHasUnread] = useState(
-        chatmessage.has_unread_message
-    );
 
-    const handleChatClick = async (chatId) => {
-        setChatId(chatId);
-        localStorage.setItem('chatId', chatId);
+    const handleChatClick = async (inputChatId) => {
+        setChatId(inputChatId);
+        localStorage.setItem('chatId', inputChatId);
 
-        // If message has no unread message, return
-        if(!hasUnread){
-            console.log("This message has no unread messge")
-            return;
-        } 
-        // Set message as read
         try {
-            const response = await fetchWithAuth(`${BASE_URL}/chats/${chatId}/set-last-read-message/`, {
-                method: 'PATCH',
+            // Update chat message read status
+            // If chat has no unread message, return
+            if(lastMessageIsRead) return;
+            const response = await fetchWithAuth(`${BASE_URL}/chats/${inputChatId}/set-message-read-status/`, {
+                method: 'POST'
             });
-            
+
             if(!response.ok){
                 const error = await response.json();
                 console.log(error);
             }else{
-                setHasUnread(false);
                 const data = await response.json();
+                console.log(data);
+                setLastMessageIsRead(true);
             }
-        }catch(err){
-            console.log(err);
+        } catch(err){
+            console.error(err);
         }
     }
 
     return (
         <div 
-            className={`flex flex-col p-1 py-2.5 cursor-pointer hover:bg-slate-100 ${hasUnread ? 'bg-[#F5F5F5]' : ''}`}
+            className={`flex flex-col p-1 py-2.5 cursor-pointer hover:bg-slate-100 ${!lastMessageIsRead ? 'bg-slate-200' : ''}`}
             onClick={() => handleChatClick(chatmessage?.id)}
             >
             <div className='flex text-[11px] items-center'>
@@ -61,9 +63,9 @@ export default function ChatMessage({ chatmessage }){
                     <p className='text-[11px] leading-4 message-content-display'>{
                         chatmessage?.latest_message?.content ? chatmessage?.latest_message.content : ''
                         }</p>
-                    {hasUnread && (
+                    {!lastMessageIsRead && (
                         <div className='w-1.5 h-1.5 rounded-[50%] bg-green-500 me-2'></div>
-                    )}    
+                    )}  
                 </div>
             </div>
         </div>

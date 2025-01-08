@@ -10,30 +10,7 @@ export default function ChatMessagesContainer(){
     const { chatId } = useChat();
 
     // Set currently viewed chat's last message as the last_message_read
-    useEffect(() => {
-        
-        const setLastMessageRead = async (chatId) => {
-            try {
-                const response = await fetchWithAuth(`${BASE_URL}/chats/${chatId}/set-last-read-message/`, {
-                    method: 'PATCH',
-                });
 
-                if(!response.ok){
-                    const error = await response.json();
-                    console.log(error);
-                }else{
-                    const data = await response.json();
-                }
-            }catch(err){
-                console.log(err);
-            }
-        }
-
-        if(chatId){
-            console.log("Chat ID changed")
-            setLastMessageRead(chatId);
-        }
-    }, [chatId]);
 
     if (chats.length === 0){
         return (

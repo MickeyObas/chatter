@@ -18,7 +18,7 @@ export default function MainLayout(){
 
             notificationSocket.current.onmessage = (event) => {{
                 const data = JSON.parse(event.data);
-                console.log("Notification received: ", data);
+                console.log("Notification received: ", data['chat']);
 
                 const incomingMessageChatId = data['chat_id'];
 
@@ -28,6 +28,7 @@ export default function MainLayout(){
                     if (!prevChats.some((chat) => chat.id === incomingMessageChatId)){
                         return [...prevChats, data['chat']]
                     }else{
+                        console.log("Received a new message. Resetting chat to show new message obj");
                         const updatedChats = prevChats.filter((chat) => chat.id !== incomingMessageChatId);
                         return [data['chat'], ...updatedChats]
                     }
