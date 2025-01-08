@@ -31,7 +31,6 @@ const InboxMessageTextbox = forwardRef(({
 
     useEffect(() => {
        if(selectedEmoji){
-        console.log(selectedEmoji);
         setContent((prev) => prev + selectedEmoji);
         clearEmoji();
        }

@@ -60,7 +60,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-        print("ROOM NAME", self.room_group_name)
 
     async def disconnect(self, close_code):
         # Remove the WebSocket connection from the room group
@@ -113,7 +112,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             owner_chat.last_read_message = new_message
             await database_sync_to_async(owner_chat.save)()
 
-            print("All good")
 
         # Send the message to the group asynchronously
             await self.channel_layer.group_send(
@@ -162,7 +160,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-        print(f"Notifications for {self.user_group_name} ACTIVE")
 
     async def disconnect(self, close_code):
         # Remove this WebSocket connection from the user's group
@@ -174,7 +171,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         # Handle incoming messages from the client (optional)
         data = json.loads(text_data)
-        print(f"Received notification from user {self.user_id}: {data}")
 
     async def send_notification(self, event):
         # Send notification to the user
@@ -187,8 +183,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         notification['chat'] = chat
         notification['message'] = message
-
-        print(notification)
 
         await self.send(text_data=json.dumps(notification))
 

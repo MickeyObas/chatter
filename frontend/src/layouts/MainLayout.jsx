@@ -21,31 +21,29 @@ export default function MainLayout(){
                 console.log("Notification received: ", data);
 
                 const incomingMessageChatId = data['chat_id'];
-                console.log("chatId: ", chatId);
-                console.log("incomingMessageChatID: ", incomingMessageChatId);
 
-                if(incomingMessageChatId !== chatId){
-                // Update position of new message's chat in the chatContainer box if user is not active in that particular chat.
+                // Update position of new message's chat in the chatContainer box.
                 setChats((prevChats) => {
                     // Is incoming message/chat ID in exising chats?
                     if (!prevChats.some((chat) => chat.id === incomingMessageChatId)){
                         return [...prevChats, data['chat']]
                     }else{
                         const updatedChats = prevChats.filter((chat) => chat.id !== incomingMessageChatId);
-                        return [...updatedChats, data['chat']]
+                        return [data['chat'], ...updatedChats]
                     }
-                })
-                }else{
-                    // User is currently viewing new message's chat
-                    console.log("Recipient is viewing chat")
+                });
+
+                // User is currently viewing new message's chat
+                if(incomingMessageChatId === chatId){
                     setChat((prevChat) => (
                         {
                             ...prevChat,
                             messages: [...prevChat.messages, data['message']]
                         }
                     ))
+                    }}
                 }
-            }}
+
 
             notificationSocket.current.onclose = () => {
                 console.log("Closing notification socket.");

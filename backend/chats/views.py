@@ -56,9 +56,6 @@ def chat_detail_by_contact(request, pk):
             user=contact.contact_user
         )
 
-        if created:
-            print(f"Creating Chat for user:{request.user} + contact:{contact.contact_user.id}")
-
         serializer = ChatSerializer(chat)
 
         response =  Response(serializer.data)

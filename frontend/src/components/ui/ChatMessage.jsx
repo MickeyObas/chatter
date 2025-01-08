@@ -18,7 +18,6 @@ export default function ChatMessage({ chatmessage }){
 
         // If message has no unread message, return
         if(!hasUnread){
-            console.log(hasUnread);
             console.log("This message has no unread messge")
             return;
         } 

@@ -49,10 +49,8 @@ export default function InboxMessageSection(){
     
             chatSocket.current.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                console.log("Incoming", data);
                 
                 const sentMessageChatId = data['chat']['id'];
-                console.log(sentMessageChatId, chatId);
 
                 // Update chat messages container after user sends 
                 if(sentMessageChatId === chatId){
