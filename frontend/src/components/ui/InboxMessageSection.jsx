@@ -55,6 +55,7 @@ export default function InboxMessageSection(){
                 // Update chat messages container after user sends 
                 if(sentMessageChatId === chatId){
                     setChat(data['chat']);
+                    localStorage.setItem('chat', JSON.stringify(data['chat']));
                     setChats((prevChats) => {
                         // Is the chat of the most recently sent message currently in the container?
                         if (!prevChats.some((chat) => chat.id === sentMessageChatId)){
