@@ -7,6 +7,7 @@ class Message(models.Model):
     sender = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='sent_messages')
     recipient = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
+    is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

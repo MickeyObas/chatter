@@ -9,11 +9,7 @@ class ChatSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(many=True, read_only=True)
     owner = UserSummarySerializer()
     user = UserSummarySerializer()
-    has_unread_message = serializers.SerializerMethodField(read_only=True)
     
-    def get_has_unread_message(self, obj):
-        return obj.has_unread_message()
-
     class Meta: 
         model = Chat
         fields = [
@@ -23,17 +19,12 @@ class ChatSerializer(serializers.ModelSerializer):
             'messages',
             'created_at',
             'updated_at',
-            'has_unread_message'
         ]
 
 
 class ChatDisplaySerializer(serializers.ModelSerializer):
     latest_message = serializers.SerializerMethodField()
     user = UserSummarySerializer()
-    has_unread_message = serializers.SerializerMethodField(read_only=True)
-    
-    def get_has_unread_message(self, obj):
-        return obj.has_unread_message()
 
     class Meta:
         model = Chat
@@ -43,7 +34,6 @@ class ChatDisplaySerializer(serializers.ModelSerializer):
             'latest_message',
             'created_at',
             'updated_at',
-            'has_unread_message'
         ]
 
     def get_latest_message(self, obj):
@@ -52,7 +42,8 @@ class ChatDisplaySerializer(serializers.ModelSerializer):
             if latest_message:
                 return {
                     "content": latest_message.content,
-                    "created_at": latest_message.created_at.isoformat()
+                    "created_at": latest_message.created_at.isoformat(),
+                    "is_read": latest_message.is_read
                 }
             
         except obj.messages.model.DoesNotExist:

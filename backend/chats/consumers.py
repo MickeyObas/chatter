@@ -106,7 +106,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Validate and save messages asynchronously
         if await database_sync_to_async(owner_serializer.is_valid)(raise_exception=True) and await database_sync_to_async(recipient_serializer.is_valid)(raise_exception=True):
             new_message = await database_sync_to_async(owner_serializer.save)()
-            await database_sync_to_async(recipient_serializer.save)()
+            recipient_new_message = await database_sync_to_async(recipient_serializer.save)()
+
+            # Update the read_status of latest_message for sender
+            new_message.is_read = True
+            await database_sync_to_async(new_message.save)()
+
+            # If the recipient is currently online (for specific chat), set the read_status of latest_message
+            
 
             # Update the last read message for the owner chat
             owner_chat.last_read_message = new_message
@@ -130,7 +137,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'type': 'send_notification',
                     'notification': {
                         'type': 'new_message',
-                        'message_id': new_message.id,
+                        'message_id': recipient_new_message.id,
                         'chat_id': recipient_chat.id,
                     }
                 }

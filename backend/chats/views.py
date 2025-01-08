@@ -35,8 +35,7 @@ def chat_list(request):
 def chat_detail(request, pk):
     try:
         chat = Chat.objects.get(
-            id=pk,
-            owner=request.user
+            id=pk, # Enforce owner = request.user again
         )
     except Chat.DoesNotExist:
         return Response({"message": "Chat does not exist"}, status=status.HTTP_404_NOT_FOUND)
@@ -45,6 +44,21 @@ def chat_detail(request, pk):
 
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+def admin_chat_list(request):
+    try:
+        user = request.user
+        chats = Chat.objects.all()
+
+        serializer = ChatDisplaySerializer(chats, many=True)
+
+        return Response(serializer.data)
+    
+    except Exception as e:
+        print(e)
+        return Response({'error': str(e)})
+    
 
 @api_view(['GET'])
 def chat_detail_by_contact(request, pk):
@@ -90,3 +104,21 @@ def set_last_read_message(request, pk):
     
     except Exception as e:
         return Response({'error': str(e)})
+    
+
+@api_view(['POST'])
+def set_unread_messages_to_read(request, chat_id):
+    try:
+        chat = Chat.objects.get(id=chat_id)
+        unread_messages = chat.messages.filter(
+            is_read=False
+        )
+
+        for unread_message in unread_messages:
+            unread_message.is_read = True
+            unread_message.save()
+
+        return Response({'message': 'Read status of messages updated'})
+    except Exception as e:
+        return Response({'error': 'An error occured in changing the read status of messages'}, status=status.HTTP_400_BAD_REQUEST)
+        

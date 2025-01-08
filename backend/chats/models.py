@@ -13,15 +13,6 @@ class Chat(models.Model):
     def __str__(self):
         return f"{self.owner.email}'s Chat with {self.user}"
     
-    def has_unread_message(self):
-        if not self.messages.exists():
-            return False
-
-        if not self.last_read_message and self.messages.exists():
-            return True
-        
-        return self.messages.filter(created_at__gt=self.last_read_message.created_at).exists()
-    
     @classmethod
     def order_by_latest_message(cls, user):
         try:

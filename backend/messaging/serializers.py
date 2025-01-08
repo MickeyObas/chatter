@@ -11,6 +11,7 @@ class MessageSerializer(serializers.ModelSerializer):
             'sender',
             'recipient',
             'content',
+            'is_read',
             'chat',
             'created_at',
             'updated_at'
