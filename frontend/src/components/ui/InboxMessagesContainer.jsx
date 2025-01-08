@@ -14,10 +14,7 @@ const InboxMessagesContainer = forwardRef(({chat, messageTextAreaRef}, ref) => {
         if(messageTextAreaRef.current){
             messageTextAreaRef.current.focus();
         }
-    });
-
-    // When chat.user changes, open ws connection to 1-1 room
-    
+    });    
 
     const scrollToBottom = () => {
         setTimeout(() => {
@@ -36,7 +33,7 @@ const InboxMessagesContainer = forwardRef(({chat, messageTextAreaRef}, ref) => {
             {/* {Array(9).fill("_").map((inboxMessage, idx) => (
                 <InboxMessage key={idx} userIsSender={idx%2===0} />
             ))} */}
-            {chat.messages.map((message, idx) => {
+            {chat?.messages?.map((message, idx) => {
                 return (
                     <InboxMessage 
                         key={idx} 

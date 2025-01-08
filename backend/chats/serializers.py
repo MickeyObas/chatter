@@ -52,10 +52,10 @@ class ChatDisplaySerializer(serializers.ModelSerializer):
             if latest_message:
                 return {
                     "content": latest_message.content,
-                    "created_at": latest_message.created_at
+                    "created_at": latest_message.created_at.isoformat()
                 }
             
         except obj.messages.model.DoesNotExist:
             {
-                "created_at": obj.created_at
+                "created_at": obj.created_at.isoformat()
             }

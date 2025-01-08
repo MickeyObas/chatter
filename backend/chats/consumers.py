@@ -2,22 +2,45 @@
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from asgiref.sync import async_to_sync, sync_to_async
 from channels.db import database_sync_to_async
+from channels.layers import get_channel_layer
 import json
 
 from chats.models import Chat
+from messaging.models import Message
 from accounts.models import CustomUser
+from accounts.serializers import (
+    UserSummarySerializer, 
+    UserSerializer
+)
 from messaging.serializers import (
     CreateMessageSerializer, 
     MessageSerializer
 )
+from chats.serializers import (
+    ChatSerializer,
+    ChatDisplaySerializer
+)
 
 @database_sync_to_async
-def get_chat(chat_id):
+def get_chat_display(chat_id):
     chat = Chat.objects.get(id=chat_id)
-    return {
-        "id": chat.user.id,
-        "email": chat.user.email
-    }
+    owner = chat.owner
+    messages_qs = chat.messages.all()
+    response = ChatDisplaySerializer(chat).data
+    response['messages'] = MessageSerializer(messages_qs, many=True).data
+    response['owner'] = UserSummarySerializer(owner).data
+    return response 
+
+@database_sync_to_async
+def get_chat_detail(chat_id):
+    chat = Chat.objects.get(id=chat_id)
+    return ChatSerializer(chat).data
+
+
+@database_sync_to_async
+def get_message(message_id):
+    message = Message.objects.get(id=message_id)
+    return MessageSerializer(message).data
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -96,11 +119,76 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(
                 self.room_group_name, {
                     'type': 'chat.message',
-                    'data': MessageSerializer(new_message).data
+                    'data': MessageSerializer(new_message).data,
+                    'chat_id': owner_chat.id
                 }
             )
+
+            # Send a notification to the recipient user group
+            channel_layer = get_channel_layer()
+            await channel_layer.group_send(
+                f"user_{recipient_id}",
+                {
+                    'type': 'send_notification',
+                    'notification': {
+                        'type': 'new_message',
+                        'message_id': new_message.id,
+                        'chat_id': recipient_chat.id,
+                    }
+                }
+            )
+        
 
     async def chat_message(self, event):
         # Handle incoming chat message event
         data = event['data']
+        chat_id = event['chat_id']
+        chat = await get_chat_display(chat_id)
+        data['chat'] = chat
         await self.send(text_data=json.dumps(data))
+
+
+
+# Notifications
+class NotificationConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.user_id = self.scope['url_route']['kwargs']['user_id']
+        self.user_group_name = f"user_{self.user_id}"
+
+        await self.channel_layer.group_add(
+            self.user_group_name,
+            self.channel_name
+        )
+
+        await self.accept()
+
+        print(f"Notifications for {self.user_group_name} ACTIVE")
+
+    async def disconnect(self, close_code):
+        # Remove this WebSocket connection from the user's group
+        await self.channel_layer.group_discard(
+            self.user_group_name,
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        # Handle incoming messages from the client (optional)
+        data = json.loads(text_data)
+        print(f"Received notification from user {self.user_id}: {data}")
+
+    async def send_notification(self, event):
+        # Send notification to the user
+        notification = event['notification']
+        chat_id = event['notification']['chat_id']
+        message_id = event['notification']['message_id']
+
+        chat = await get_chat_display(chat_id)
+        message = await get_message(message_id)
+
+        notification['chat'] = chat
+        notification['message'] = message
+
+        print(notification)
+
+        await self.send(text_data=json.dumps(notification))
+

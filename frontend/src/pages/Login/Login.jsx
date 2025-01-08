@@ -78,7 +78,8 @@ export function Login(){
             }else{
                 const data = await response.json();
                 login(data)
-                const from = location.state?.from || '/';
+                // const from = location.state?.from || '/';
+                const from = '/';
                 navigate(from);
             }
 

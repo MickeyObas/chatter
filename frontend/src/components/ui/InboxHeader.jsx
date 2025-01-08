@@ -15,16 +15,16 @@ export default function InboxHeader({chat}){
         <div className='flex flex-col'>
             <div className='py-4 px-3.5 border-b flex items-center'>
                 <div className='h-12 w-12 rounded-full overflow-hidden'>
-                    <img src={getProfilePicture(chat.user.profile_picture)} alt="" className='w-full h-full object-cover'/>
+                    <img src={getProfilePicture(chat?.user?.profile_picture)} alt="" className='w-full h-full object-cover'/>
                 </div>
                 <div className='flex flex-col'>
                     <div className='flex'>
                         <div className='flex flex-col ms-3.5'>
-                            <h2 className='text-sm font-semibold'>{chat.user.name}</h2>
-                            <h3 className='text-[11px]'>@{chat.user.email.split('@')[0]}</h3>
+                            <h2 className='text-sm font-semibold'>{chat?.user?.name}</h2>
+                            <h3 className='text-[11px]'>@{chat?.user?.email.split('@')[0]}</h3>
                         </div>
                         <div>
-                            {chat.user.status === 'ONLINE' ? (
+                            {chat?.user?.status === 'ONLINE' ? (
                                 <div className='rounded-full bg-white border-[1.5px] border-slate-300 flex items-center justify-center text-[10px] px-1 text-slate-700 ms-2 gap-x-2'>
                                 <div className='bg-green-600 w-1.5 h-1.5 rounded-full'></div>
                                 <h2>Online</h2>

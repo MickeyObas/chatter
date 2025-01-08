@@ -50,33 +50,23 @@ export default function InboxMessageSection(){
             chatSocket.current.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 console.log("Incoming", data);
-    
-                setChat((prev) => (
-                    {
-                        ...prev,
-                        messages: [...prev.messages, data]
-                    }
-                ));
                 
-                setChats((prev) => {
+                const sentMessageChatId = data['chat']['id'];
+                console.log(sentMessageChatId, chatId);
 
-                    if(prev.length === 0){
-                        console.log("No previous chats")
-                        return [data]
-                    }
-                    
-                    return (
-                    prev.map((chat) => {
-                        if(chat.id === chatId){
-                            return {
-                                ...chat,
-                                latest_message: data
-                            }
+                // Update chat messages container after user sends 
+                if(sentMessageChatId === chatId){
+                    setChat(data['chat']);
+                    setChats((prevChats) => {
+                        // Is the chat of the most recently sent message currently in the container?
+                        if (!prevChats.some((chat) => chat.id === sentMessageChatId)){
+                            return[...prevChats, data['chat']]
                         }else{
-                            return chat;
+                            const updatedChats = prevChats.filter((chat) => chat.id !== sentMessageChatId);
+                            return [data['chat'], ...updatedChats]
                         }
                     })
-                )}) 
+                }
             };
         };
 
