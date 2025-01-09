@@ -14,6 +14,7 @@ export function ChatProvider({ children }){
     const [loading, setLoading] = useState(true);
     const [chats, setChats] = useState([]);
 
+
     useEffect(() => {
         if(!chatId) return;
 

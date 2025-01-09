@@ -17,7 +17,9 @@ export default function InboxMessageSection(){
     const { user } = useAuth();
     const ref = useRef(null);
     const messageTextAreaRef = useRef(null);
-    const { chat, chatId, setChat, setChats } = useChat();
+    const { chat, setChat, setChats } = useChat();
+    // TODO -> chatId =/= localstorage __ context
+    let chatId = JSON.parse(localStorage.getItem('chatId'));
     const [loading, setLoading] = useState(false);
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -49,11 +51,12 @@ export default function InboxMessageSection(){
     
             chatSocket.current.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                console.log(data['chat']);
+                
                 const sentMessageChatId = data['chat']['id'];
 
                 // Update chat messages container after user sends 
                 if(sentMessageChatId === chatId){
+                    console.log(`${user.email} sent this message bitch`);
                     setChat(data['chat']);
                     localStorage.setItem('chat', JSON.stringify(data['chat']));
                     setChats((prevChats) => {

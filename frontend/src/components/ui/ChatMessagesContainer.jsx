@@ -7,7 +7,6 @@ import { useChat } from '../../context/ChatContext';
 export default function ChatMessagesContainer(){
     const { chats } = useChat(); 
     const [loading, setLoading] = useState(true);
-    const { chatId } = useChat();
 
     // Set currently viewed chat's last message as the last_message_read
 
