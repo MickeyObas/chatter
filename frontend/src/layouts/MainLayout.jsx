@@ -3,6 +3,8 @@ import Sidebar from "../components/ui/Sidebar";
 import { useEffect, useRef } from 'react';
 import { useAuth } from "../context/AuthContext";
 import { useChat } from "../context/ChatContext";
+import { fetchWithAuth } from "../utils";
+import { BASE_URL } from "../constants";
 
 export default function MainLayout(){
     // Connect to webssocket on login 
@@ -18,33 +20,85 @@ export default function MainLayout(){
 
             notificationSocket.current.onmessage = (event) => {{
                 const data = JSON.parse(event.data);
-                console.log("Notification received: ", data['chat']);
 
-                const incomingMessageChatId = data['chat_id'];
+                const setMessagesReadStatus = async () => {
+                    try {
+                        const response = await fetchWithAuth(`${BASE_URL}/chats/${chatId}/set-message-read-status/`, {
+                            method: 'POST'
+                        }); 
 
-                // Update position of new message's chat in the chatContainer box.
-                setChats((prevChats) => {
-                    // Is incoming message/chat ID in exising chats?
-                    if (!prevChats.some((chat) => chat.id === incomingMessageChatId)){
-                        return [...prevChats, data['chat']]
-                    }else{
-                        console.log("Received a new message. Resetting chat to show new message obj");
-                        const updatedChats = prevChats.filter((chat) => chat.id !== incomingMessageChatId);
-                        return [data['chat'], ...updatedChats]
-                    }
-                });
-
-                // User is currently viewing new message's chat
-                if(incomingMessageChatId === chatId){
-                    setChat((prevChat) => (
-                        {
-                            ...prevChat,
-                            messages: [...prevChat.messages, data['message']]
+                        if(!response.ok){
+                            console.error("Something went wrong with changing messages read status");
+                        }else{
+                            console.log("Messagses read status updated.");
                         }
-                    ))
-                    }}
+                    }catch(err){
+                        console.error(err);
+                    }   
                 }
+                
+                if(data['type'] === 'new_message'){
 
+                    const incomingMessageChatId = data['chat_id'];
+
+                    // Update position of new message's chat in the chatContainer box.
+                    setChats((prevChats) => {
+                        // Is incoming message/chat ID in exising chats?
+                        if (!prevChats.some((chat) => chat.id === incomingMessageChatId)){
+
+                            // Check if user is in chat inbox when new message arrives
+                            if(chatId === incomingMessageChatId){
+                                setMessagesReadStatus();
+
+                                return [
+                                    {
+                                        ...data['chat'],
+                                        latest_message: {
+                                            ...data['chat']['latest_message'],
+                                            is_read: true
+                                        }
+                                    },
+                                    ...prevChats
+                                ]
+                            }else{
+                                return [data['chat'], ...prevChats]
+                            };
+
+                        }else{
+                            console.log("Received a new message. Resetting chat to show new message obj");
+                            const updatedChats = prevChats.filter((chat) => chat.id !== incomingMessageChatId);
+                            // Check if user is in chat inbox when new message arrives
+                            if(chatId === incomingMessageChatId){
+                                setMessagesReadStatus();
+                                return [
+                                    {
+                                        ...data['chat'],
+                                        latest_message: {
+                                            ...data['chat']['latest_message'],
+                                            is_read: true
+                                        }
+                                    },
+                                    ...updatedChats
+                                ]
+                            }else{
+                                return [data['chat'], ...updatedChats]
+                            }
+                        }
+                    });
+    
+                    // Update Messages in Chat Inbox
+                    if(incomingMessageChatId === chatId){
+                        setChat((prevChat) => (
+                            {
+                                ...prevChat,
+                                messages: [...prevChat.messages, data['message']]
+                            }
+                        ))
+                    }
+                }else if(data['type'] === 'online_status_update'){
+                    console.log(data);
+                }
+            }}
 
             notificationSocket.current.onclose = () => {
                 console.log("Closing notification socket.");

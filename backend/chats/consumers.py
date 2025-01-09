@@ -21,6 +21,12 @@ from chats.serializers import (
     ChatDisplaySerializer
 )
 
+import redis
+import asyncio
+
+redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
+ONLINE_USERS = set()
+
 @database_sync_to_async
 def get_chat_display(chat_id):
     chat = Chat.objects.get(id=chat_id)
@@ -62,6 +68,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
     async def disconnect(self, close_code):
+
         # Remove the WebSocket connection from the room group
         await self.channel_layer.group_discard(
             self.room_group_name,
@@ -159,20 +166,64 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_id = self.scope['url_route']['kwargs']['user_id']
         self.user_group_name = f"user_{self.user_id}"
-
+        
         await self.channel_layer.group_add(
             self.user_group_name,
             self.channel_name
         )
 
+        # Add user_id to online_users Redis set
+        redis_client.sadd("online_users", self.user_id)
+
+        print("User Connected -> ", redis_client.smembers('online_users'))
+
+        # Add user to global online_users group 
+        channel_layer = get_channel_layer()
+        await channel_layer.group_add(
+            "online_users",
+            self.channel_name
+        )
+
         await self.accept()
+
+        # Send online_users list to func -> friends who's online
+        # Send online_users to everyone online
+        await channel_layer.group_send(
+            "online_users",
+            {
+                "type": "update.online.users"
+            }
+            
+        )
 
 
     async def disconnect(self, close_code):
+
+        await asyncio.sleep(5)
+
         # Remove this WebSocket connection from the user's group
         await self.channel_layer.group_discard(
             self.user_group_name,
             self.channel_name
+        )
+
+        # Remove connection from group
+        channel_layer = get_channel_layer()
+        await channel_layer.group_discard(
+            "online_users",
+            self.channel_name
+        )
+
+        # Remove user from Redis online_users set
+        redis_client.srem("online_users", self.user_id)
+        print("User Disconnected -> ", redis_client.smembers('online_users'))
+
+        # Send updates list of online users 
+        await channel_layer.group_send(
+            "online_users",
+            {
+                "type": "update.online.users"
+            }
         )
 
     async def receive(self, text_data):
@@ -192,4 +243,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         notification['message'] = message
 
         await self.send(text_data=json.dumps(notification))
+
+    async def update_online_users(self, event):
+
+        await self.send(text_data=json.dumps({
+            'type': 'online_status_update',
+            'online_users_ids': list(redis_client.smembers('online_users'))
+            }))
 

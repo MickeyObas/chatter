@@ -39,7 +39,7 @@ export default function InboxMessageSection(){
         setSelectedEmoji(emoji.native);
     }
 
-     // When chat.user changes, open ws connection to 1-1 room
+     // When chat.user changes, open ws connection to 1-1 room, or something
     useEffect(() => {
 
         const openConnection = async () => {
