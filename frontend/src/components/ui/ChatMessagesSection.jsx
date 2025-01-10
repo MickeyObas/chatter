@@ -8,7 +8,7 @@ export default function ChatMessagesSection({ isStandalone }){
     const width = isStandalone ? 'w-[24vw]' : 'w-[32%]';
     return (
         <div className={`h-screen border-e border-e-slate-300 py-4 px-5 ${width}`}>
-            <div className='flex flex-col items-center h-full'>
+            <div className='flex flex-col items-center h-full w-full'>
                 <div className='flex items-center border-[1.4px] px-2 py-0.5 rounded-lg w-full'>
                     <img src={search} alt="" className='h-3'/>
                     <input type="text" className='py-1 px-1.5 rounded-e-lg text-xs border-none outline-none' placeholder='Search'/>

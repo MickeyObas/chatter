@@ -140,3 +140,9 @@ export function formatDatetime(datetimeStr) {
     // Format the date
     return date.toLocaleString('en-US', options);
 }
+
+export function areArraysEqualSets(arr1, arr2) {
+    return arr1.length === arr2.length && 
+           new Set(arr1).size === new Set(arr2).size && 
+           arr1.every((value) => arr2.includes(value));
+}

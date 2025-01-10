@@ -19,33 +19,39 @@ import Group from './pages/Group/Group.jsx';
 import Notifications from './pages/Notification/Notifications.jsx';
 import Help from './pages/Help/Help.jsx';
 import Test from './components/ui/Test.jsx';
+import { OnlineContactsProvider } from './context/OnlineContactsContext.jsx';
+import { ContactProvider } from './context/ContactContext.jsx';
 
 
 function App() {
 
   return (
     <AuthProvider>
-      <ChatProvider>
-        <Routes>
-          <Route element={<ProtectedRoutes />}>
-            <Route path='/' element={<MainLayout />}>
-              <Route path='' element={<Home />} index/>
-              <Route path='contacts' element={<Contact />} />
-              <Route path='profile/:userId/' element={<Profile />} />
-              <Route path='test' element={<Test />} />
-              <Route path='groups' element={<Group />} />
-              <Route path='notifications' element={<Notifications />} />
-              <Route path='help' element={<Help />} />
-              <Route path='settings/profile/' element={<Profile />} />
-            </Route>
-          </Route>
-          
-          <Route path='register' element={<Register />}/>
-          <Route path='login' element={<Login />}/>
-          <Route path='email-confirm/:token/' element={<EmailConfirm />}/>
+      <OnlineContactsProvider>
+        <ContactProvider>
+          <ChatProvider>
+            <Routes>
+              <Route element={<ProtectedRoutes />}>
+                <Route path='/' element={<MainLayout />}>
+                  <Route path='' element={<Home />} index/>
+                  <Route path='contacts' element={<Contact />} />
+                  <Route path='profile/:userId/' element={<Profile />} />
+                  <Route path='test' element={<Test />} />
+                  <Route path='groups' element={<Group />} />
+                  <Route path='notifications' element={<Notifications />} />
+                  <Route path='help' element={<Help />} />
+                  <Route path='settings/profile/' element={<Profile />} />
+                </Route>
+              </Route>
+              
+              <Route path='register' element={<Register />}/>
+              <Route path='login' element={<Login />}/>
+              <Route path='email-confirm/:token/' element={<EmailConfirm />}/>
 
-        </Routes>
-      </ChatProvider>
+            </Routes>
+          </ChatProvider>
+        </ContactProvider>
+      </OnlineContactsProvider>
     </AuthProvider>
     
   )

@@ -8,6 +8,36 @@ from .models import (
 from .serializers import ContactSerializer
 from accounts.models import CustomUser
 
+from backend.config.redis_client import redis_client
+
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def online_contact_list(request):
+    try:
+        user = request.user
+
+        contacts = Contact.objects.filter(
+            user=user
+        )
+        
+        online_users_list = [int(x) for x in list(redis_client.smembers('online_users'))]
+
+        online_contacts = contacts.filter(
+            contact_user__id__in=online_users_list
+        )
+
+        serializer = ContactSerializer(online_contacts, many=True)
+
+        return Response(serializer.data)
+
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    
+    except Exception as e:
+        return Response({'error': str(e)})
+
 
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])

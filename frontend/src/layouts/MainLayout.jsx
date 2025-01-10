@@ -81,7 +81,9 @@ export default function MainLayout(){
                         });
                     }
 
-                }else if(data['type'] === 'online_status_update'){
+                }else if(data['type'] === 'user_came_online'){
+                    console.log(data);
+                }else if(data['type'] === 'user_went_offline'){
                     console.log(data);
                 };
             }}
@@ -93,9 +95,15 @@ export default function MainLayout(){
 
         if(notificationSocket){
             openNotifcationConnection();
-        }
+        };
 
-    }, [])
+        return () => {
+            if (notificationSocket.current) {
+                notificationSocket.current.close();
+            }
+        };
+
+    }, [user])
 
 
     return (

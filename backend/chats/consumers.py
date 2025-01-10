@@ -1,5 +1,8 @@
 # consumers.py
-from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
+from channels.generic.websocket import (
+    AsyncWebsocketConsumer,
+)
+from channels.generic.http import AsyncHttpConsumer
 from asgiref.sync import async_to_sync, sync_to_async
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
@@ -20,12 +23,9 @@ from chats.serializers import (
     ChatSerializer,
     ChatDisplaySerializer
 )
-
-import redis
+from backend.config.redis_client import redis_client
 import asyncio
-
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
-ONLINE_USERS = set()
+from channels.exceptions import StopConsumer
 
 @database_sync_to_async
 def get_chat_display(chat_id):
@@ -160,11 +160,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(data))
 
 
-
 # Notifications
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        print(type(redis_client))
         self.user_id = self.scope['url_route']['kwargs']['user_id']
+        print(f"Connected as {self.user_id}")
         self.user_group_name = f"user_{self.user_id}"
         
         await self.channel_layer.group_add(
@@ -172,59 +173,47 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        # Add user_id to online_users Redis set
-        redis_client.sadd("online_users", self.user_id)
-
-        print("User Connected -> ", redis_client.smembers('online_users'))
-
-        # Add user to global online_users group 
-        channel_layer = get_channel_layer()
-        await channel_layer.group_add(
+        await self.channel_layer.group_add(
             "online_users",
             self.channel_name
         )
 
+        if not redis_client.sismember('online_users', self.user_id):
+            redis_client.sadd("online_users", self.user_id)
+        
         await self.accept()
 
-        # Send online_users list to func -> friends who's online
-        # Send online_users to everyone online
-        await channel_layer.group_send(
+        await self.channel_layer.group_send(
             "online_users",
             {
-                "type": "update.online.users"
-            }
-            
+                "type": "user.online",
+                "user_id": self.user_id
+            }    
         )
 
-
     async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            "online_users",
+            self.channel_name
+        )
 
-        await asyncio.sleep(5)
-
-        # Remove this WebSocket connection from the user's group
         await self.channel_layer.group_discard(
             self.user_group_name,
             self.channel_name
         )
-
-        # Remove connection from group
-        channel_layer = get_channel_layer()
-        await channel_layer.group_discard(
-            "online_users",
-            self.channel_name
-        )
-
-        # Remove user from Redis online_users set
-        redis_client.srem("online_users", self.user_id)
-        print("User Disconnected -> ", redis_client.smembers('online_users'))
-
-        # Send updates list of online users 
-        await channel_layer.group_send(
+        
+        await self.channel_layer.group_send(
             "online_users",
             {
-                "type": "update.online.users"
+                "type": "user.offline",
+                "user_id": self.user_id
             }
         )
+
+        channel_layer = get_channel_layer()
+
+        redis_client.srem("online_users", self.user_id)
+
 
     async def receive(self, text_data):
         # Handle incoming messages from the client (optional)
@@ -244,10 +233,47 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps(notification))
 
-    async def update_online_users(self, event):
-
+    async def user_online(self, event):
         await self.send(text_data=json.dumps({
-            'type': 'online_status_update',
-            'online_users_ids': list(redis_client.smembers('online_users'))
-            }))
+            'type': 'user_came_online',
+            'message': f"User {event['user_id']} just came online!"
+        }))
 
+    async def user_offline(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'user_went_offline',
+            'message': f"User {event['user_id']} just went offline!"
+        }))
+
+
+class OnlineUserSSEConsumer(AsyncHttpConsumer):
+    async def handle(self, body):
+       
+        await self.send_headers(
+            headers=[
+                (b"Access-Control-Allow-Origin", b"http://localhost:5173"),
+                (b"Access-Control-Allow-Credentials", b"true"),
+                (b"Content-Type", b"text/event-stream"),
+                (b"Cache-Control", b"no-cache"),
+                (b"Connection", b"keep-alive"),
+            ]
+        )
+
+        try:
+            while True:
+                # Fetch online users from cache
+                online_users = online_users_list = [int(x) for x in list(redis_client.smembers('online_users'))]
+                message = f"data: {online_users}\n\n"
+                await self.send_body(message.encode("utf-8"), more_body=True)
+                await asyncio.sleep(5)  # Send updates every 5 seconds
+        except asyncio.CancelledError:
+            raise StopConsumer()
+        except Exception:
+            raise StopConsumer()
+
+    async def disconnect(self):
+        return await super().disconnect()
+    
+    async def http_disconnect(self, message):
+        return await super().http_disconnect(message)
+    

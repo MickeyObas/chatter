@@ -6,42 +6,16 @@ import { fetchWithAuth, getProfilePicture } from '../../utils';
 import { BASE_URL } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';
+import { useContact } from '../../context/ContactContext';
 
 function Contact() {
-
-    const [contacts, setContacts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { contacts, loading } = useContact();
     const [selectedContactId, setSelectedContactId] = useState(null);
     let selectedContact = contacts.find((contact) => contact.id === selectedContactId);
     const { user } = useAuth();
     const { setChat, setChatId } = useChat();
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const getContacts = async () => {
-            try{
-                const response = await fetchWithAuth(`${BASE_URL}/contacts/`, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if(!response.ok){
-                    console.log("Contacts could not be fetched properly.")
-                }else{
-                    const data = await response.json();
-                    setContacts(data);
-                }
-            }catch(err){
-                console.error(err);
-            }finally{
-                setLoading(false);
-            }
-        };
-
-        getContacts();
-
-    }, [])
 
     const handleContactClick = (contactId) => {
         setSelectedContactId(contactId);

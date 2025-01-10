@@ -18,7 +18,7 @@ export default function ChatMessagesContainer(){
     }
 
     return (
-        <div className='messages-container flex flex-col overflow-y-auto  pr-2 h-full'>
+        <div className='messages-container flex flex-col overflow-y-auto pr-2 h-full'>
             {chats.length > 0 && chats?.map((chatmessage, idx) => (
                 <ChatMessage 
                     key={idx}
