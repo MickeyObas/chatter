@@ -1,6 +1,6 @@
 import { useLocation, Outlet, Navigate } from "react-router-dom";
 import { BASE_URL } from "./constants";
-import defaultProfilePicture from './assets/images/user-2.png';;
+import defaultProfilePicture from './assets/images/user-2.png';
 
 export const fetchWithAuth = async (url, options = {}) => {
     // Retrieve the access and refresh tokens
@@ -141,8 +141,15 @@ export function formatDatetime(datetimeStr) {
     return date.toLocaleString('en-US', options);
 }
 
-export function areArraysEqualSets(arr1, arr2) {
-    return arr1.length === arr2.length && 
-           new Set(arr1).size === new Set(arr2).size && 
-           arr1.every((value) => arr2.includes(value));
+// A function to compare if two arrays have the same elements regardless of their order
+export const areArraysIdentical = (a, b) => {
+    if (a.length !== b.length) return false;
+    const elements = new Set([...a, ...b]);
+    for (const x of elements) {
+        const count1 = a.filter(e => e === x).length;
+        const count2 = b.filter(e => e === x).length;
+        if (count1 !== count2) return false;
+    }
+    return true;
 }
+

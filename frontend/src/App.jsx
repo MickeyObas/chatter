@@ -27,8 +27,8 @@ function App() {
 
   return (
     <AuthProvider>
-      <OnlineContactsProvider>
-        <ContactProvider>
+      <ContactProvider>
+        <OnlineContactsProvider>
           <ChatProvider>
             <Routes>
               <Route element={<ProtectedRoutes />}>
@@ -50,8 +50,8 @@ function App() {
 
             </Routes>
           </ChatProvider>
-        </ContactProvider>
-      </OnlineContactsProvider>
+        </OnlineContactsProvider>
+      </ContactProvider>
     </AuthProvider>
     
   )
