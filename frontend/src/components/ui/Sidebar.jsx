@@ -13,6 +13,9 @@ import { TbLogout2 } from "react-icons/tb";
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+import {fetchWithAuth} from '../../utils';
+import { BASE_URL } from '../../constants';
+
 
 export default function Sidebar(){
     const { user, logout } = useAuth();
@@ -51,9 +54,26 @@ export default function Sidebar(){
          }
     ];
 
-    const handleLogoutClick = () => {
-        logout();
-        navigate('/login');
+    const handleLogoutClick = async () => {
+        // Handle Logout in backend
+        
+        try {
+            const response = await fetchWithAuth(`${BASE_URL}/logout/`, {
+                method: 'POST'
+            });
+
+            if(!response.ok){
+                console.log("Logout failed");
+                
+            }else{
+                const data = await response.json();
+                console.log(data);
+                logout();
+                navigate('/login');
+            }
+        } catch(err){
+            console.error(err);
+        }
     }
     
     const handleSettingsClick = () => {

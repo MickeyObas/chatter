@@ -12,9 +12,13 @@ import { useParams } from "react-router-dom";
 // Toast Notification
 import { Slide, Bounce, ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { useOnlineContacts } from "../../context/OnlineContactsContext";
 
 function Profile() {
     const { userId } = useParams();
+    const { onlineUserz } = useOnlineContacts();
+    const isOnline = onlineUserz?.includes(parseInt(userId));
+    console.log(isOnline);
 
     const profilePicInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -169,7 +173,7 @@ function Profile() {
                         </div>
                     </div>
                 </div>
-                {profile.status === 'ONLINE' ? (
+                {isOnline ? (
                     <div className='w-fit self-center mt-2 rounded-full bg-white border-[1.5px] border-slate-300 flex items-center justify-center text-[10px] px-1 text-slate-700 ms-2 gap-x-2'>
                     <div className='bg-green-600 w-1.5 h-1.5 rounded-full'></div>
                     <h2>Online</h2>

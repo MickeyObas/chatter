@@ -14,6 +14,7 @@ export default function MainLayout(){
     // TODO
 
     useEffect(() => {
+        if(!user) return;
         const openNotifcationConnection = () => {
             notificationSocket.current = new WebSocket(
                 `ws://localhost:8000/ws/notifications/${user.id}/`
@@ -83,6 +84,7 @@ export default function MainLayout(){
 
                 }else if(data['type'] === 'user_came_online'){
                     console.log(data);
+                    // PATCH request to update USER status
                 }else if(data['type'] === 'user_went_offline'){
                     console.log(data);
                 };
@@ -103,7 +105,7 @@ export default function MainLayout(){
             }
         };
 
-    }, [user])
+    }, [user?.id])
 
 
     return (

@@ -27,31 +27,36 @@ function App() {
 
   return (
     <AuthProvider>
-      <ContactProvider>
-        <OnlineContactsProvider>
-          <ChatProvider>
-            <Routes>
-              <Route element={<ProtectedRoutes />}>
-                <Route path='/' element={<MainLayout />}>
-                  <Route path='' element={<Home />} index/>
-                  <Route path='contacts' element={<Contact />} />
-                  <Route path='profile/:userId/' element={<Profile />} />
-                  <Route path='test' element={<Test />} />
-                  <Route path='groups' element={<Group />} />
-                  <Route path='notifications' element={<Notifications />} />
-                  <Route path='help' element={<Help />} />
-                  <Route path='settings/profile/' element={<Profile />} />
-                </Route>
-              </Route>
-              
-              <Route path='register' element={<Register />}/>
-              <Route path='login' element={<Login />}/>
-              <Route path='email-confirm/:token/' element={<EmailConfirm />}/>
+      <Routes>
 
-            </Routes>
-          </ChatProvider>
-        </OnlineContactsProvider>
-      </ContactProvider>
+      {/* Public Routes */}
+      <Route path='register' element={<Register />}/>
+      <Route path='login' element={<Login />}/>
+      <Route path='email-confirm/:token/' element={<EmailConfirm />}/>
+
+      {/* Private Routes */}
+        <Route element={<ProtectedRoutes />}>
+          <Route path='/' element={
+            <ContactProvider>
+              <OnlineContactsProvider>
+                <ChatProvider>
+                  <MainLayout />
+                </ChatProvider>
+              </OnlineContactsProvider>
+            </ContactProvider>
+          }>
+            <Route path='' element={<Home />} index/>
+            <Route path='contacts' element={<Contact />} />
+            <Route path='profile/:userId/' element={<Profile />} />
+            <Route path='test' element={<Test />} />
+            <Route path='groups' element={<Group />} />
+            <Route path='notifications' element={<Notifications />} />
+            <Route path='help' element={<Help />} />
+            <Route path='settings/profile/' element={<Profile />} />
+          </Route>
+        </Route>
+
+      </Routes>
     </AuthProvider>
     
   )

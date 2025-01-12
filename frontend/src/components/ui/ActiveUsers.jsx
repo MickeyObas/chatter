@@ -26,8 +26,8 @@ export default function ActiveUsers(){
             <h1 className='text-[13px] font-semibold'>Active</h1>
             <div className='w-full'>
                 <div className='flex mt-4 gap-x-3 w-full overflow-x-auto overflow-y-hidden px-2 pt-1 py-4'>
-                    <div className='w-9 h-9'>
-                        <h1>Loading...</h1>
+                    <div className='w-9 h-9 flex-shrink-0'>
+                        <h1 className='h-full'>Loading...</h1>
                     </div>
                 </div>
              </div>
@@ -43,12 +43,16 @@ export default function ActiveUsers(){
                     {/* {Array(10).fill('_').map((user, idx) => (
                         <ActiveUser key={idx}/>
                     ))} */}
-                    {onlineContacts.map((contact, idx) => (
+                    {onlineContacts.length > 0 ? (onlineContacts.map((contact, idx) => (
                         <ActiveUser key={idx} contact={contact}/>
-                    ))}
+                    ))) : (
+                        <div className='h-9 flex w-full justify-center  flex-shrink-0 items-center'>
+                            <h1 className='text-xs text-center h-full mt-4'>No Active Users</h1>
+                        </div>
+                    )}
                 </div>
              </div>
-             <hr className='mt-3 w-full'/>
-        </div>
+             <hr className='mt-2 w-full'/>
+        </div> 
     )
 }

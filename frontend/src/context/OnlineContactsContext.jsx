@@ -15,17 +15,27 @@ export function OnlineContactsProvider({ children }){
     const { contacts, loading:contactsLoading } = useContact();
     const { user } = useAuth();
 
+    const [onlineUserz, setOnlineUserz] = useState([]);
+
     useEffect(() => {
         if(contactsLoading) return;
+        console.log("Component Rendered");
         const eventSource = new EventSource(`http://localhost:8000/sse/online-users/`, {
             withCredentials: true,
         });
 
         localStorage.setItem('prev_online_users', JSON.stringify([]));
 
+        eventSource.onopen = (event) => {
+            console.log("I just opened an EventSource brooo");
+        }
+
         eventSource.onmessage = function(event) {
             // Get currently online users from REDIS
             const onlineUsers = JSON.parse(event.data).filter((onlineUser) => onlineUser !== user.id);
+
+            setOnlineUserz(onlineUsers);
+
             const prevOnlineUsers = JSON.parse(localStorage.getItem('prev_online_users'));
             localStorage.setItem('prev_online_users', JSON.stringify(onlineUsers));
 
@@ -52,14 +62,14 @@ export function OnlineContactsProvider({ children }){
         };
 
         return () => {
-            // Cleanup the EventSource when the component unmounts
+            console.log("Closing EventSource")
             eventSource.close();
         };
-    }, [contactsLoading]);  // The empty dependency array ensures this effect runs only once 
+    }, [contactsLoading, user?.id]); 
 
     useEffect(() => {
         const getOnlineContacts = async () => {
-            if(contactsLoading) return;
+            if(contactsLoading || !user) return;
             try {
                 const response = await fetchWithAuth(`${BASE_URL}/contacts/online/`, {
                     method: 'GET',
@@ -89,7 +99,7 @@ export function OnlineContactsProvider({ children }){
     }, [contactsLoading])
 
     return (
-        <OnlineContactsContext.Provider value={{onlineContacts, setOnlineContacts}}>
+        <OnlineContactsContext.Provider value={{onlineContacts, setOnlineContacts, onlineUserz}}>
             {children}
         </OnlineContactsContext.Provider>
     )

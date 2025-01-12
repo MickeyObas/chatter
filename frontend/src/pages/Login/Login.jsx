@@ -78,9 +78,17 @@ export function Login(){
             }else{
                 const data = await response.json();
                 login(data)
-                // const from = location.state?.from || '/';
-                const from = '/';
-                navigate(from);
+
+                let destination;
+                
+                if(!data.is_first_login){
+                    destination = location.state?.from || '/';
+                }
+                else{
+                    destination = '/settings/profile/';
+                }
+                
+                navigate(destination);
             }
 
         }catch(err){

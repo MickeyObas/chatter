@@ -56,7 +56,6 @@ export default function InboxMessageSection(){
 
                 // Update chat messages container after user sends 
                 if(sentMessageChatId === chatId){
-                    console.log(`${user.email} sent this message bitch`);
                     setChat(data['chat']);
                     localStorage.setItem('chat', JSON.stringify(data['chat']));
                     setChats((prevChats) => {

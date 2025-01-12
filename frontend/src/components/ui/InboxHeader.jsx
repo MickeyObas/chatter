@@ -2,14 +2,19 @@ import v_dots from '../../assets/images/v-dots2.png';
 import PropTypes from 'prop-types';
 import { getProfilePicture } from '../../utils';
 import { useNavigate } from 'react-router-dom';
+import { useOnlineContacts } from '../../context/OnlineContactsContext';
 
 
 export default function InboxHeader({chat}){
     const navigate = useNavigate();
+    const {onlineUserz} = useOnlineContacts();
 
     const handledViewProfileClick = () => {
         navigate(`/profile/${chat.user.id}`);
     }
+
+    const isOnline = onlineUserz?.includes(chat.user.id);
+    console.log(isOnline);
 
     return (
         <div className='flex flex-col'>
@@ -24,7 +29,7 @@ export default function InboxHeader({chat}){
                             <h3 className='text-[11px]'>@{chat?.user?.email.split('@')[0]}</h3>
                         </div>
                         <div>
-                            {chat?.user?.status === 'ONLINE' ? (
+                            {isOnline ? (
                                 <div className='rounded-full bg-white border-[1.5px] border-slate-300 flex items-center justify-center text-[10px] px-1 text-slate-700 ms-2 gap-x-2'>
                                 <div className='bg-green-600 w-1.5 h-1.5 rounded-full'></div>
                                 <h2>Online</h2>
