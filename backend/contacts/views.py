@@ -9,6 +9,7 @@ from .serializers import ContactSerializer
 from accounts.models import CustomUser
 
 from backend.config.redis_client import redis_client
+import json
 
 
 
@@ -39,20 +40,68 @@ def online_contact_list(request):
         return Response({'error': str(e)})
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @permission_classes([permissions.IsAuthenticated])
-def contact_list(request):
-    try:
-        user = request.user
-    except CustomUser.DoesNotExist:
-        return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
-    
-    contacts = Contact.objects.filter(
-        user=user
-    )
-    serializer = ContactSerializer(contacts, many=True)
+def contact_list_create(request):
+    if request.method == 'GET':
+        try:
+            user = request.user
+        except CustomUser.DoesNotExist:
+            return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+        contacts = Contact.objects.filter(
+            user=user
+        )
+        serializer = ContactSerializer(contacts, many=True)
 
-    return Response(serializer.data)
+        return Response(serializer.data)
+    else:
+        try:
+            data = json.loads(request.body)
+            user = request.user
+            contact_user = CustomUser.objects.get(
+                email=data['email']
+            )
+
+            # User trying to add themself as a contact
+            if contact_user == user:
+                return Response({
+                    'error': 'You cannot add yourself as a contact.'
+                })
+            
+            # User trying to add already existing contact
+            if Contact.objects.filter(
+                user=user,
+                contact_user=contact_user
+            ).exists():
+                return Response({
+                    'error': f'You already have user "{data['email']}" as a contact.'
+                })
+
+            new_contact = Contact.objects.create(
+                user=user,
+                contact_user=contact_user
+            )
+            new_contact.save()
+
+            contacts = Contact.objects.filter(
+                user=user
+            )
+
+            serializer = ContactSerializer(contacts, many=True)
+
+            return Response({
+                'message': 'Contact Added Successfully',
+                'contacts': serializer.data
+            })
+        except CustomUser.DoesNotExist:
+            return Response({
+                'error': f'User with email address "{data['email']}" does not exist in our records'
+            })
+        except Exception as e:
+            return Response({
+                'error': str(e)
+            })
 
 
 @api_view(['GET'])
