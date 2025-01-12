@@ -1,21 +1,34 @@
 import searchIcon from '../../assets/images/search.png';
 import { IoMdStarOutline } from "react-icons/io";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchWithAuth, getProfilePicture } from '../../utils';
 import { BASE_URL } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';
 import { useContact } from '../../context/ContactContext';
+import Button from '../../components/form/Button';
+import Input from '../../components/form/Input';
 
 function Contact() {
-    const { contacts, loading } = useContact();
+    const { contacts, loading, setContacts } = useContact();
     const [selectedContactId, setSelectedContactId] = useState(null);
     let selectedContact = contacts.find((contact) => contact.id === selectedContactId);
     const { user } = useAuth();
     const { setChat, setChatId } = useChat();
 
+    const [showAddContactDropdown, setShowAddContactDropdown] = useState(false);
+    const [contactToAdd, setContactToAdd] = useState('');
+    const [error, setError] = useState('');
+    const [addingContactLoading, setAddingContactLoading] = useState(false);
+
     const navigate = useNavigate();
+
+    const handleKeyPress = (e) => {
+        if(e.key === 'Enter'){
+            addContactClick();
+        }
+    }
 
     const handleContactClick = (contactId) => {
         setSelectedContactId(contactId);
@@ -46,12 +59,105 @@ function Contact() {
         } catch(err){
             console.error(err);
         }
+    };
+
+    const handleAddContactClick = () => {
+        console.log("Add contact button clicked!");
+        setShowAddContactDropdown(!showAddContactDropdown);
+    }
+
+    const handleContactToAddChange = (e) => {
+        setContactToAdd(e.target.value);
+        setError('');
+    }
+
+    const handleCancelClick = () => {
+        setShowAddContactDropdown(false);
+        setContactToAdd('');
+        setError('');
+    }
+
+    const addContactClick = async () => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if(!emailRegex.test(contactToAdd.trim())){
+            setError('Please enter a valid email address.');
+            return;
+        };
+
+        try {
+            const response = await fetchWithAuth(`${BASE_URL}/contacts/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'email': contactToAdd
+                })
+            });
+
+            if(!response.ok){
+                console.log("Contact was NOT added");
+            }else{
+                const data = await response.json();
+                if(data.error){
+                    setError(data.error);
+                }else{
+                    console.log(data);
+                    setContacts(data.contacts);
+                    setContactToAdd('');
+                }
+            }
+        } catch(err){
+            console.error(err);
+        }
     }
 
   return (
     <div className="flex w-[80%] h-full">
         <div className="w-[60%] flex flex-col px-3 py-4 border-e border-e-slate-300 h-full">
-            <h2 className='mb-2.5'>Contacts</h2>
+            <div className='flex justify-between items-center pb-2.5'>
+                <h2 className='mb-2.5 h-4'>Contacts</h2>
+                <div className='relative'>
+                    <Button 
+                        text='Add Contact'
+                        customClass='text-xs'
+                        onClick={handleAddContactClick}
+                    />
+                    {showAddContactDropdown && (
+                        <div
+                        className='absolute w-72 bg-slate-100  rounded-lg flex flex-col mt-2 pt-2.5 px-1.5'
+                        >
+                            <div className='flex'>
+                                <Input 
+                                customClass='text-xs'
+                                value={contactToAdd}
+                                onChange={handleContactToAddChange}
+                                onKeyPress={handleKeyPress}
+                                />
+                                <Button 
+                                    text='Cancel'
+                                    customClass='text-xs ms-1 bg-red-500 hover:bg-red-400'
+                                    onClick={handleCancelClick}
+                                />
+                                <Button 
+                                    text='Add'
+                                    customClass='text-xs ms-1'
+                                    onClick={addContactClick}
+                                />
+                            </div>
+                            <div>
+                                {error ? (
+                                    <h1 className='text-[10px] text-red-500 mt-1.5'>{error}</h1>
+                                ) : (
+                                    <h1 className='text-[10px] mt-1.5'>Enter an email address.</h1>
+                                )}
+                            </div>
+                        <div>
+                        </div>
+                    </div>
+                    )}
+                </div>
+            </div>
             <div className='flex items-center border-[1.4px] px-2 py-0.5 rounded-lg w-full'>
                 <img src={searchIcon} alt="" className='h-3'/>
                 <input type="text" className='py-1 px-1.5 rounded-e-lg text-xs border-none outline-none w-full' placeholder='Search my contacts'/>
