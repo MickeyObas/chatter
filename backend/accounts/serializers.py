@@ -22,7 +22,8 @@ class UserSerializer(serializers.ModelSerializer):
             'status_text',
             'status',
             'last_seen',
-            'deleted_at'
+            'deleted_at',
+            'is_first_login'
         ]
         extra_kwargs = {
             'password': {'write_only': True},

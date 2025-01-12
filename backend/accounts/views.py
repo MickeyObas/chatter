@@ -53,7 +53,9 @@ def profile_update(request):
         serializer = UserProfileUpdateSerializer(user, data=request.data, context={'request': request}, partial=True)
 
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            user = serializer.save()
+            user.is_first_login = False
+            user.save()
             return Response({"message": "Profile updated successfully!"})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

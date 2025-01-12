@@ -14,17 +14,8 @@ from django.core.cache import cache
 
 from accounts.models import CustomUser
 from accounts.serializers import UserSerializer
+from backend.config.redis_client import redis_client
     
-
-class CustomLogoutView(APIView):
-    def post(self, request):
-        response = JsonResponse({"message": "Logged out!"})
-        response.delete_cookie("refresh_token")
-        response.delete_cookie("access_token")
-        response.delete_cookie("csrftoken")
-        django_logout(request)
-        return response
-
 
 @api_view(['POST'])
 def register(request):
@@ -60,11 +51,19 @@ def login(request):
                 'email': user.email,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
-            }
+            },
+            'is_first_login': user.is_first_login
         }, status=status.HTTP_200_OK)
             
     else:
         return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['POST'])
+def logout(request):
+    user = request.user
+    redis_client.srem('online_users', user.id)
+    return Response({'message': 'Logged out successfully.'})
 
 
 @api_view(['GET'])
