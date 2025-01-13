@@ -7,6 +7,7 @@ const GroupInboxMessagesContainer = forwardRef(({groupChat, messageTextAreaRef},
     
     const messagesEndRef = useRef(null);
     const { user } = useAuth();
+    console.log(groupChat?.messages);
 
     useLayoutEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
@@ -32,9 +33,17 @@ const GroupInboxMessagesContainer = forwardRef(({groupChat, messageTextAreaRef},
 
     return (
         <div className='flex flex-col p-4 gap-y-3.5 overflow-y-auto mb-2 h-full w-full overflow-x-hidden'>
-            {Array(9).fill("_").map((inboxMessage, idx) => (
-                <GroupInboxMessage key={idx} ownerIsSender={idx%2===0} />
+            {groupChat?.messages && groupChat?.messages.map((message, idx) => (
+                <GroupInboxMessage 
+                    key={idx}
+                    message={message}
+                    ownerIsSender={message?.sender?.id===user.id}
+                    user={user}
+                />
             ))}
+            {/* {Array(9).fill("_").map((inboxMessage, idx) => (
+                <GroupInboxMessage key={idx} ownerIsSender={idx%2==0} />
+            ))} */}
             {/* {groupChat?.messages?.map((message, idx) => {
                 return (
                     <InboxMessage 

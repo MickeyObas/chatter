@@ -4,35 +4,15 @@ import searchIcon from '../../assets/images/search.png';
 import { fetchWithAuth, getProfilePicture } from "../../utils";
 import { BASE_URL } from "../../constants";
 import defaultImageIcon from '../../assets/images/image.png';
+import { useChat } from "../../context/ChatContext";
 
 function Groups() {
-  const [groupChats, setGroupChats] = useState([]);
+  const { groupChats } = useChat(); 
   const [selectedGroupChatId, setSelectedGroupChatId] = useState(''); 
   const selectedGroupChat = groupChats.find((groupChat) => groupChat.id === selectedGroupChatId);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchGroupChats = async () => {
-      try {
-        const response = await fetchWithAuth(`${BASE_URL}/chats/groups/`, {
-          method: 'GET'
-        });
 
-        if(!response.ok){
-          console.log("Could not fetch chats. Bad response");
-        }else{
-          const data = await response.json();
-          console.log(data);
-          setGroupChats(data);
-        }
-      } catch(err){
-        console.error(err);
-      }
-    };
-
-    fetchGroupChats();
-
-  }, []);
 
   const handleGroupChatClick = (id) => {
     setSelectedGroupChatId(id);
@@ -91,11 +71,10 @@ function Groups() {
               </div>
               <div 
                   className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center mb-5 cursor-pointer hover:bg-slate-300'
-                  
+                  onClick={handleSendMessageClick}
                   >
                   <div 
                     className='text-xs text-blue-500'
-                    onClick={handleSendMessageClick}
                     >Send Message</div>
               </div>
               <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center cursor-pointer hover:bg-slate-300'>
@@ -116,4 +95,4 @@ function Groups() {
   )
 }
 
-export default Groups
+export default Groups;

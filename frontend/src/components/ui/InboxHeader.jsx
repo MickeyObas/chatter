@@ -14,7 +14,6 @@ export default function InboxHeader({chat}){
     }
 
     const isOnline = onlineUserz?.includes(chat.user.id);
-    console.log(isOnline);
 
     return (
         <div className='flex flex-col'>

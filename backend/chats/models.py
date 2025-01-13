@@ -51,4 +51,16 @@ class GroupChat(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @classmethod
+    def order_by_latest_message(cls, user):
+        try:
+            return cls.objects.filter(members__in=[user.id]).annotate(
+                latest_message_time=Max('groupchatmessage__created_at')
+            ).order_by('-latest_message_time')
+        except Exception as e:
+            print("The issue is here", e)
+            return cls.objects.none()
+
+    def __str__(self):
+        return self.title
         

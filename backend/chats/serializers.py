@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import Chat, GroupChat
 from accounts.serializers import UserSummarySerializer
-from messaging.serializers import MessageSerializer
+from messaging.serializers import MessageSerializer, GroupChatMessageSerializer
 
 
 class ChatSerializer(serializers.ModelSerializer):
@@ -53,6 +53,8 @@ class ChatDisplaySerializer(serializers.ModelSerializer):
 
 
 class GroupChatSerializer(serializers.ModelSerializer):
+    messages = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = GroupChat
         fields = [
@@ -61,8 +63,39 @@ class GroupChatSerializer(serializers.ModelSerializer):
             'owner',
             'admins',
             'description',
+            'messages',
             'picture',
             'members',
             'created_at',
             'updated_at'
         ]
+
+    def get_messages(self, obj):
+        messages = obj.groupchatmessage_set.all()
+        return GroupChatMessageSerializer(messages, many=True).data
+    
+
+class GroupChatDisplaySerializer(serializers.ModelSerializer):
+    latest_message = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = GroupChat
+        fields = [
+            'id',
+            'title',
+            'owner',
+            'latest_message',
+            'description',
+            'picture',
+        ]
+
+    def get_latest_message(self, obj):
+        try:
+            latest_message = obj.groupchatmessage_set.latest()
+            if latest_message:
+                return {
+                    "sender": f"{latest_message.sender.first_name} {latest_message.sender.last_name}",
+                    "content": latest_message.content,
+                    "created_at": latest_message.created_at.isoformat(),
+                }
+        except obj.groupchatmessage_set.model.DoesNotExist:
+            return None

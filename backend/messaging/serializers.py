@@ -33,6 +33,7 @@ class CreateMessageSerializer(serializers.ModelSerializer):
     
 
 class GroupChatMessageSerializer(serializers.ModelSerializer):
+    sender = UserSummarySerializer()
     class Meta:
         model = GroupChatMessage
         fields = [
@@ -40,5 +41,17 @@ class GroupChatMessageSerializer(serializers.ModelSerializer):
             'sender',
             'content',
             'created_at',
-            'updates_at'
+            'updated_at'
         ]
+
+class CreateGroupChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupChatMessage
+        fields = [
+            'sender',
+            'content',
+            'groupchat',
+        ]
+
+    def create(self, validated_data):
+        return GroupChatMessage.objects.create(**validated_data)

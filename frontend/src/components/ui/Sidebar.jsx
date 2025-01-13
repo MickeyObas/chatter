@@ -67,7 +67,6 @@ export default function Sidebar(){
                 
             }else{
                 const data = await response.json();
-                console.log(data);
                 logout();
                 navigate('/login');
             }

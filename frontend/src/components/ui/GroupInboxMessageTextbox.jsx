@@ -16,6 +16,8 @@ const GroupInboxMessageTextbox = forwardRef(({
     handleEmojiOptionClick,
     selectedEmoji,
     clearEmoji,
+    groupChat,
+    groupChatSocket
 }, messageTextAreaRef) => {
     const [content, setContent] = useState('');
     const emojiRef = useRef(null);
@@ -35,20 +37,16 @@ const GroupInboxMessageTextbox = forwardRef(({
     const handleSendMessageClick = async () => {
 
         if(!content.trim()) return;
-        // if(!chatSocket.current) return;
+        if(!groupChatSocket.current) return;
 
-        /*
         const data = {
             content: content,
-            chat_id: chatId,
-            recipient_id: chat.user.id,
+            groupchat_id: groupChat.id,
             sender_id: user.id
         };
-        */
 
         try{
-            // Send message through socket
-            // chatSocket.current.send(JSON.stringify(data))
+            groupChatSocket.current.send(JSON.stringify(data))
             console.log("Sending data");
         }catch(err){
             console.log(err);

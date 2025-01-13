@@ -26,6 +26,10 @@ class GroupChatMessage(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        get_latest_by = 'created_at'
+        ordering = ['created_at']
     
 
 

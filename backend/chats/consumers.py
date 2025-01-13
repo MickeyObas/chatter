@@ -8,8 +8,8 @@ from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 import json
 
-from chats.models import Chat
-from messaging.models import Message
+from chats.models import Chat, GroupChat
+from messaging.models import Message, GroupChatMessage
 from accounts.models import CustomUser
 from accounts.serializers import (
     UserSummarySerializer, 
@@ -17,11 +17,15 @@ from accounts.serializers import (
 )
 from messaging.serializers import (
     CreateMessageSerializer, 
-    MessageSerializer
+    MessageSerializer,
+    GroupChatMessageSerializer,
+    CreateGroupChatMessageSerializer
 )
 from chats.serializers import (
     ChatSerializer,
-    ChatDisplaySerializer
+    ChatDisplaySerializer,
+    GroupChatSerializer,
+    GroupChatDisplaySerializer
 )
 from backend.config.redis_client import redis_client
 import asyncio
@@ -48,6 +52,15 @@ def get_message(message_id):
     message = Message.objects.get(id=message_id)
     return MessageSerializer(message).data
 
+@database_sync_to_async
+def get_group_chat(groupchat_id):
+    groupchat = GroupChat.objects.get(id=groupchat_id)
+    return GroupChatDisplaySerializer(groupchat).data
+
+@database_sync_to_async
+def get_group_chat_detail(groupchat_id):
+    groupchat = GroupChat.objects.get(id=groupchat_id)
+    return GroupChatSerializer(groupchat).data
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -245,6 +258,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'message': f"User {event['user_id']} just went offline!"
         }))
 
+    async def notification_group_message(self, event):
+        groupchat = await get_group_chat(event['groupchat_id'])
+        event['groupchat'] = groupchat
+        event['type'] = 'groupchat_message'
+        await self.send(text_data=json.dumps(event))
+
 
 class OnlineUserSSEConsumer(AsyncHttpConsumer):
     async def handle(self, body):
@@ -277,3 +296,68 @@ class OnlineUserSSEConsumer(AsyncHttpConsumer):
     async def http_disconnect(self, message):
         return await super().http_disconnect(message)
     
+
+class GroupChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.user_id = self.scope['url_route']['kwargs']['user_id']
+        self.groupchat_id = self.scope['url_route']['kwargs']['groupchat_id']
+        self.group_chat_name = f"user_{self.groupchat_id}"
+
+        await self.channel_layer.group_add(
+            self.group_chat_name,
+            self.channel_name
+        )
+
+        await self.accept()
+
+    async def disconnect(self, code):
+        await self.channel_layer.group_discard(
+            self.group_chat_name,
+            self.channel_name
+        )
+
+    async def receive(self, text_data=None, bytes_data=None):
+        data = json.loads(text_data)
+        groupchat = await database_sync_to_async(GroupChat.objects.get)(id=data['groupchat_id'])
+        sender = await database_sync_to_async(CustomUser.objects.get)(id=data['sender_id'])
+        content = data['content']
+        
+        # Serialize data
+        message_data = {
+            'sender': sender.id,
+            'groupchat': groupchat.id,
+            'content': content
+        }
+
+        group_chat_message_serializer = CreateGroupChatMessageSerializer(data=message_data)
+
+        # Create message in DB
+        if await database_sync_to_async(group_chat_message_serializer.is_valid)(raise_exception=True):
+            new_groupchat_message = await database_sync_to_async(group_chat_message_serializer.save)()
+
+            await self.channel_layer.group_send(
+                self.group_chat_name, {
+                    'type': 'groupchat.message',
+                    'data': GroupChatMessageSerializer(new_groupchat_message).data,
+                    'groupchat_id': new_groupchat_message.groupchat.id
+                }
+            )
+
+            # Send to each user
+            groupchat_data = await get_group_chat_detail(new_groupchat_message.groupchat.id)
+
+            for member_id in groupchat_data['members']:
+                await self.channel_layer.group_send(
+                    f"user_{member_id}", {
+                        'type': 'notification.group.message',
+                        'data': GroupChatMessageSerializer(new_groupchat_message).data,
+                        'groupchat_id': new_groupchat_message.groupchat.id
+                    }
+                )
+
+
+
+    async def groupchat_message(self, event):
+        groupchat = await get_group_chat(event['groupchat_id'])
+        event['groupchat'] = groupchat
+        await self.send(text_data=json.dumps(event))

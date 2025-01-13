@@ -10,7 +10,7 @@ export default function MainLayout(){
     // Connect to webssocket on login 
     const notificationSocket = useRef(null);
     const { user } = useAuth();
-    const { setChat, setChats } = useChat();
+    const { setChat, setChats, setGroupChats } = useChat();
     // TODO
 
     useEffect(() => {
@@ -87,7 +87,20 @@ export default function MainLayout(){
                     // PATCH request to update USER status
                 }else if(data['type'] === 'user_went_offline'){
                     console.log(data);
-                };
+                }else if(data['type'] == 'groupchat_message'){
+                    setGroupChats((prev) => {
+                        const updatedChats = prev.some((chat) => chat.id === data.groupchat_id)
+                          ? prev.filter((chat) => chat.id !== data.groupchat_id)
+                          : prev;
+            
+                          console.log([data.groupchat, updatedChats])
+            
+                          return [
+                            data.groupchat,
+                            ...updatedChats
+                          ]
+                      })
+                }
             }}
 
             notificationSocket.current.onclose = () => {

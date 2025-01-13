@@ -9,9 +9,9 @@ import GroupInboxMessagesContainer from './GroupInboxMessagesContainer';
 
 function GroupInboxMessageSection({
     groupChat,
+    groupChatSocket
 }) { 
 
-    console.log(groupChat);
     const ref = useRef(null);
     const messageTextAreaRef = useRef(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -55,7 +55,7 @@ function GroupInboxMessageSection({
                 handleEmojiOptionClick={handleEmojiOptionClick} handleClickOutsideEmojiBox={handleClickOutsideEmojiBox}
                 selectedEmoji={selectedEmoji}
                 clearEmoji={() => setSelectedEmoji('')}
-                // chatSocket={chatSocket}
+                groupChatSocket={groupChatSocket}
                 />
         </div>
     </div>

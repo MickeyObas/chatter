@@ -19,7 +19,6 @@ export function OnlineContactsProvider({ children }){
 
     useEffect(() => {
         if(contactsLoading) return;
-        console.log("Component Rendered");
         const eventSource = new EventSource(`http://localhost:8000/sse/online-users/`, {
             withCredentials: true,
         });

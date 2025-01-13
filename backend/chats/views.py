@@ -13,7 +13,8 @@ from contacts.models import Contact
 from .serializers import (
     ChatSerializer,
     ChatDisplaySerializer,
-    GroupChatSerializer
+    GroupChatSerializer,
+    GroupChatDisplaySerializer
 )
 
 
@@ -138,8 +139,9 @@ def group_chat_detail(request, pk):
 @api_view(['GET'])
 def group_chat_list(request):
     user = request.user
-    group_chats = GroupChat.objects.filter(
-        members__in=[user.id]
-    )
-    serializer = GroupChatSerializer(group_chats, many=True)
+    # group_chats = GroupChat.objects.filter(
+    #     members__in=[user.id]
+    # )
+    group_chats = GroupChat.order_by_latest_message(user)
+    serializer = GroupChatDisplaySerializer(group_chats, many=True)
     return Response(serializer.data)

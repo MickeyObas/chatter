@@ -7,17 +7,16 @@ import { useEffect, useState } from 'react';
 
 export default function ChatMessage({ chatmessage }){
     const [lastMessageIsRead, setLastMessageIsRead] = useState(
-        chatmessage.latest_message.is_read
+        chatmessage?.latest_message?.is_read
     )
 
     useEffect(() => {
-        setLastMessageIsRead(chatmessage.latest_message.is_read);
-    }, [chatmessage.latest_message])
+        setLastMessageIsRead(chatmessage?.latest_message?.is_read);
+    }, [chatmessage?.latest_message])
 
     const { setChatId } = useChat();
 
     const handleChatClick = async (inputChatId) => {
-        console.log("Switching to chat -> ", inputChatId);
         setChatId(inputChatId);
         localStorage.setItem('chatId', inputChatId);
 
@@ -34,7 +33,6 @@ export default function ChatMessage({ chatmessage }){
                 console.log(error);
             }else{
                 const data = await response.json();
-                console.log(data);
                 setLastMessageIsRead(true);
             }
         } catch(err){

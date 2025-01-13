@@ -50,7 +50,6 @@ function Contact() {
                 setChat(data);
                 localStorage.setItem('chat', JSON.stringify(data));
                 // Set ChatID in context
-                console.log(data);
                 setChatId(data.id);
                 localStorage.setItem('chatId', JSON.stringify(data.id));
 
@@ -103,7 +102,6 @@ function Contact() {
                 if(data.error){
                     setError(data.error);
                 }else{
-                    console.log(data);
                     setContacts(data.contacts);
                     setContactToAdd('');
                 }

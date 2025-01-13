@@ -13,6 +13,7 @@ export function ChatProvider({ children }){
     );
     const [loading, setLoading] = useState(true);
     const [chats, setChats] = useState([]);
+    const [groupChats, setGroupChats] = useState([]);
 
 
     useEffect(() => {
@@ -74,8 +75,30 @@ export function ChatProvider({ children }){
 
     }, [chats.length]);
 
+    useEffect(() => {
+        const fetchGroupChats = async () => {
+          try {
+            const response = await fetchWithAuth(`${BASE_URL}/chats/groups/`, {
+              method: 'GET'
+            });
+    
+            if(!response.ok){
+              console.log("Could not fetch chats. Bad response");
+            }else{
+              const data = await response.json();
+              setGroupChats(data);
+            }
+          } catch(err){
+            console.error(err);
+          }
+        };
+    
+        fetchGroupChats();
+    
+      }, []);
+
     return (
-        <ChatContext.Provider value={{chatId, setChatId, chat, setChat, chats, setChats}}>
+        <ChatContext.Provider value={{chatId, setChatId, chat, setChat, chats, setChats, groupChats, setGroupChats}}>
             {children}
         </ChatContext.Provider>
     )
