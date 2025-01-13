@@ -19,5 +19,17 @@ class Message(models.Model):
         get_latest_by = 'created_at'
         ordering = ['created_at']
 
+
+class GroupChatMessage(models.Model):
+    groupchat = models.ForeignKey('chats.GroupChat', on_delete=models.CASCADE)
+    sender = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+
+
+
+
     
 

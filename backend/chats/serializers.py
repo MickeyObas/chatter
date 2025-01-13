@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Chat
+from .models import Chat, GroupChat
 from accounts.serializers import UserSummarySerializer
 from messaging.serializers import MessageSerializer
 
@@ -50,3 +50,19 @@ class ChatDisplaySerializer(serializers.ModelSerializer):
             {
                 "created_at": obj.created_at.isoformat()
             }
+
+
+class GroupChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupChat
+        fields = [
+            'id',
+            'title',
+            'owner',
+            'admins',
+            'description',
+            'picture',
+            'members',
+            'created_at',
+            'updated_at'
+        ]

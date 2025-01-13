@@ -104,13 +104,18 @@ def contact_list_create(request):
             })
 
 
-@api_view(['GET'])
-def contact_detail(request, pk):
+@api_view(['GET', 'DELETE'])
+def contact_detail_or_delete(request, pk):
     try:
         contact = Contact.objects.get(id=pk)
     except Contact.DoesNotExist:
         return Response({'message': 'Contact does not exist'}, status=status.HTTP_404_NOT_FOUND)
     
-    serializer = ContactSerializer(contact)
-
-    return Response(serializer.data)
+    if request.method == 'GET':
+        serializer = ContactSerializer(contact)
+        return Response(serializer.data)
+    
+    elif request.method == 'DELETE':
+        contact.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        

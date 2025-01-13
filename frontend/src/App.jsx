@@ -15,12 +15,13 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { ChatProvider} from './context/ChatContext.jsx';
 import Contact from './pages/Contacts/Contact.jsx';
 import Profile from './pages/Profile/Profile.jsx';
-import Group from './pages/Group/Group.jsx';
+import Groups from './pages/Groups/Groups.jsx';
 import Notifications from './pages/Notification/Notifications.jsx';
 import Help from './pages/Help/Help.jsx';
 import Test from './components/ui/Test.jsx';
 import { OnlineContactsProvider } from './context/OnlineContactsContext.jsx';
 import { ContactProvider } from './context/ContactContext.jsx';
+import Group from './pages/Group/Group.jsx';
 
 
 function App() {
@@ -49,7 +50,8 @@ function App() {
             <Route path='contacts' element={<Contact />} />
             <Route path='profile/:userId/' element={<Profile />} />
             <Route path='test' element={<Test />} />
-            <Route path='groups' element={<Group />} />
+            <Route path='groups' element={<Groups />} />
+            <Route path='groups/:groupId/' element={<Group />} />
             <Route path='notifications' element={<Notifications />} />
             <Route path='help' element={<Help />} />
             <Route path='settings/profile/' element={<Profile />} />

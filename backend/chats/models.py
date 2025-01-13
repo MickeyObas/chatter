@@ -1,7 +1,16 @@
 from django.db import models
 from django.conf import settings
 from django.db.models import Max
+from django.core.exceptions import ValidationError
 
+def validate_profile_picture(image):
+    max_size_kb = 1024  
+
+    if hasattr(image, 'size') and image.size > max_size_kb * 1024:
+        raise ValidationError("Image size exceeds 1 MB.")
+    
+    if hasattr(image, 'content_type') and not image.content_type.startswith("image/"):
+        raise ValidationError("Invalid image format.")
 
 class Chat(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='chats')
@@ -25,4 +34,21 @@ class Chat(models.Model):
     
     class Meta:
         unique_together = ['owner', 'user']
+
+
+class GroupChat(models.Model):
+    title = models.CharField(max_length=100)
+    owner = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='groupchats_owned')
+    admins = models.ManyToManyField('accounts.CustomUser', related_name='groupchats_admninistrated')
+    description = models.TextField()
+    picture = models.ImageField(
+        blank=True,
+        null=True,
+        upload_to='group_chat_display_pictures/',
+        validators=[validate_profile_picture]
+    )
+    members = models.ManyToManyField('accounts.CustomUser')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
         

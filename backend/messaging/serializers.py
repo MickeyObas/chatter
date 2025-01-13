@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Message
+from .models import Message, GroupChatMessage
 from accounts.serializers import UserSummarySerializer
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -30,3 +30,15 @@ class CreateMessageSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Message.objects.create(**validated_data)
+    
+
+class GroupChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupChatMessage
+        fields = [
+            'groupchat',
+            'sender',
+            'content',
+            'created_at',
+            'updates_at'
+        ]

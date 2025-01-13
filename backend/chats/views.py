@@ -6,12 +6,14 @@ from rest_framework.decorators import (
 )
 
 from .models import (
-    Chat
+    Chat,
+    GroupChat
 )
 from contacts.models import Contact
 from .serializers import (
     ChatSerializer,
-    ChatDisplaySerializer
+    ChatDisplaySerializer,
+    GroupChatSerializer
 )
 
 
@@ -122,3 +124,22 @@ def set_unread_messages_to_read(request, chat_id):
     except Exception as e:
         return Response({'error': 'An error occured in changing the read status of messages'}, status=status.HTTP_400_BAD_REQUEST)
         
+
+@api_view(['GET'])
+def group_chat_detail(request, pk):
+    try:
+        group_chat = GroupChat.objects.get(id=pk)
+        serializer = GroupChatSerializer(group_chat)
+        return Response(serializer.data)
+    except GroupChat.DoesNotExist:
+        return Response({'error': 'Requested Group Chat does not exists.'})
+
+
+@api_view(['GET'])
+def group_chat_list(request):
+    user = request.user
+    group_chats = GroupChat.objects.filter(
+        members__in=[user.id]
+    )
+    serializer = GroupChatSerializer(group_chats, many=True)
+    return Response(serializer.data)

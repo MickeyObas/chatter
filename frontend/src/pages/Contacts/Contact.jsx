@@ -18,6 +18,7 @@ function Contact() {
     const { setChat, setChatId } = useChat();
 
     const [showAddContactDropdown, setShowAddContactDropdown] = useState(false);
+    const [showDeleteContactModal, setShowDeleteContactModal] = useState(false);
     const [contactToAdd, setContactToAdd] = useState('');
     const [error, setError] = useState('');
     const [addingContactLoading, setAddingContactLoading] = useState(false);
@@ -110,6 +111,28 @@ function Contact() {
         } catch(err){
             console.error(err);
         }
+    };
+
+    const handleDeleteContactButtonClick = () => {
+        setShowDeleteContactModal(true);
+    };
+
+    const handleCancelDeleteContactClick = () => {
+        setShowDeleteContactModal(false);
+    };
+
+    const handleDeleteContact = async () => {
+        const response = await fetchWithAuth(`${BASE_URL}/contacts/${selectedContactId}/`, {
+            method: 'DELETE'
+        });
+
+        if(!response.ok){
+            console.log("Whoops, could not delete contact.");
+        }else{
+            console.log("Contact deleted successfully.");
+            setContacts((prev) => prev.filter((contact) => contact.id !== selectedContactId));
+            setShowDeleteContactModal(false)
+        }
     }
 
   return (
@@ -125,7 +148,7 @@ function Contact() {
                     />
                     {showAddContactDropdown && (
                         <div
-                        className='absolute w-72 bg-slate-100  rounded-lg flex flex-col mt-2 pt-2.5 px-1.5'
+                        className='absolute w-72 bg-slate-100  rounded-lg flex flex-col mt-2 pt-2.5 px-1.5 z-10'
                         >
                             <div className='flex'>
                                 <Input 
@@ -195,8 +218,25 @@ function Contact() {
                 )}
             </div>
         </div>
-        <div className="w-[40%] flex flex-col py-3.5 px-3.5">
+        <div className="w-[40%] flex flex-col py-3.5 px-3.5 relative">
         <h1 className='text-2xl text-center'>Contact Info</h1>
+            {showDeleteContactModal && (
+            <div className='w-full h-full absolute bg-transparent'>
+                <div className='bg-slate-200 h-40 w-[60%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col justify-center p-3 rounded-lg shadow-lg'>
+                    <h1 className='text-center'>Are you sure you want to delete this contact?</h1>
+                    <div className='flex mt-4 justify-evenly'>
+                        <button 
+                            className='text-sm bg-slate-300 rounded-lg py-2 px-3'
+                            onClick={handleCancelDeleteContactClick}
+                            >Cancel</button>
+                        <button 
+                            className='text-sm rounded-lg bg-red-500 py-2 px-3'
+                            onClick={handleDeleteContact}
+                            >Delete</button>
+                    </div>
+                </div>
+            </div>
+            )}
             {selectedContact ? (
                 <>
                     <div className='flex flex-col gap-y-2 items-center mt-12'>
@@ -219,7 +259,9 @@ function Contact() {
                         <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center cursor-pointer hover:bg-slate-300'>
                             <div className='text-xs'>Edit Contact</div>
                         </div>
-                        <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center cursor-pointer hover:bg-slate-300'>
+                        <div className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center cursor-pointer hover:bg-slate-300'
+                        onClick={handleDeleteContactButtonClick}
+                        >
                             <div className='text-xs text-red-600'>Delete Contact</div>
                         </div>
                     </div>
