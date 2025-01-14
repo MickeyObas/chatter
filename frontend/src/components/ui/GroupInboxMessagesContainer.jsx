@@ -33,14 +33,18 @@ const GroupInboxMessagesContainer = forwardRef(({groupChat, messageTextAreaRef},
 
     return (
         <div className='flex flex-col p-4 gap-y-3.5 overflow-y-auto mb-2 h-full w-full overflow-x-hidden'>
-            {groupChat?.messages && groupChat?.messages.map((message, idx) => (
+            {groupChat?.messages.length > 0 ? groupChat?.messages.map((message, idx) => (
                 <GroupInboxMessage 
                     key={idx}
                     message={message}
                     ownerIsSender={message?.sender?.id===user.id}
                     user={user}
                 />
-            ))}
+            )) : (
+                <div>
+                    <p className='text-xs text-center text-slate-400'>Send a message to start a conversation.</p>
+                </div>
+            )}
             {/* {Array(9).fill("_").map((inboxMessage, idx) => (
                 <GroupInboxMessage key={idx} ownerIsSender={idx%2==0} />
             ))} */}

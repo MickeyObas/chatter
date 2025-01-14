@@ -6,8 +6,9 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
 export default function ChatMessage({ chatmessage }){
+    
     const [lastMessageIsRead, setLastMessageIsRead] = useState(
-        chatmessage?.latest_message?.is_read
+        chatmessage.latest_message ? chatmessage?.latest_message?.is_read : true
     )
 
     useEffect(() => {

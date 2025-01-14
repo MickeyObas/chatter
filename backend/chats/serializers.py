@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Chat, GroupChat
+from accounts.models import CustomUser
 from accounts.serializers import UserSummarySerializer
 from messaging.serializers import MessageSerializer, GroupChatMessageSerializer
 
@@ -75,6 +76,37 @@ class GroupChatSerializer(serializers.ModelSerializer):
         return GroupChatMessageSerializer(messages, many=True).data
     
 
+class GroupChatCreateSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(required=True)
+    description = serializers.CharField(max_length=300, required=False)
+    admins = serializers.PrimaryKeyRelatedField(many=True, queryset=CustomUser.objects.all())
+    members = serializers.PrimaryKeyRelatedField(many=True, queryset=CustomUser.objects.all())
+    
+    class Meta:
+        model = GroupChat
+        fields = [
+            'title',
+            'admins',
+            'description',
+            'picture',
+            'members',
+        ]
+    
+    def create(self, validated_data):
+        request = self.context.get('request')
+        owner = request.user
+
+        admins = validated_data.pop('admins', [])
+        members = validated_data.pop('members', [])
+
+        group_chat = GroupChat.objects.create(owner=owner, **validated_data)
+
+        group_chat.admins.set(admins)
+        group_chat.members.set(members)
+
+        return group_chat
+
+
 class GroupChatDisplaySerializer(serializers.ModelSerializer):
     latest_message = serializers.SerializerMethodField(read_only=True)
     class Meta:
@@ -86,6 +118,7 @@ class GroupChatDisplaySerializer(serializers.ModelSerializer):
             'latest_message',
             'description',
             'picture',
+            'created_at'
         ]
 
     def get_latest_message(self, obj):

@@ -19,7 +19,7 @@ export default function ChatMessagesContainer(){
 
     return (
         <div className='messages-container flex flex-col overflow-y-auto pr-2 h-full'>
-            {chats.length > 0 && chats?.map((chatmessage, idx) => (
+            {chats.length > 0 && chats?.filter((chat) => chat.latest_message !== null).map((chatmessage, idx) => (
                 <ChatMessage 
                     key={idx}
                     chatmessage={chatmessage}

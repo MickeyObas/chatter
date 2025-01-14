@@ -52,7 +52,7 @@ function GroupChatMessagesSection({groupChats}) {
                         )}
                     </div>
                     <div className='flex flex-col ms-auto w-[15%]'>
-                        <p className='text-[10px]'>{groupChat.latest_message ? formatTime(groupChat?.latest_message?.created_at) : ''}</p>
+                        <p className='text-[10px]'>{groupChat.latest_message ? formatTime(groupChat?.latest_message?.created_at) : formatTime(groupChat.created_at)}</p>
                         <div className='w-6 h-6 bg-green-500 rounded-full flex justify-center items-center ms-auto'>
                             <p className='text-[10px]'>99</p>
                         </div>

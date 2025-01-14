@@ -52,6 +52,8 @@ def profile_update(request):
 
         serializer = UserProfileUpdateSerializer(user, data=request.data, context={'request': request}, partial=True)
 
+        print(request.data)
+
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
             user.is_first_login = False

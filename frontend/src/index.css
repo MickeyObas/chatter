@@ -73,6 +73,15 @@
   line-height: 1.5em;
 }
 
+.new-group-member-name{
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+  line-height: 1.5em;
+}
+
 .profile-picture-container {
   position: relative;
   width: 200px;
@@ -124,4 +133,10 @@
 
 .change-button:hover {
   background-color: #ddd;
+}
+
+.contact-modal-overlay{
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.055);
+  transition: background-color ease 0.6s;
 }
