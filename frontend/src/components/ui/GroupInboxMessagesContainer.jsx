@@ -42,7 +42,7 @@ const GroupInboxMessagesContainer = forwardRef(({groupChat, messageTextAreaRef},
                 />
             )) : (
                 <div>
-                    <p className='text-xs text-center text-slate-400'>Send a message to start a conversation.</p>
+                    <p className='text-xs text-center text-slate-400'>Send a message to start the conversation.</p>
                 </div>
             )}
             {/* {Array(9).fill("_").map((inboxMessage, idx) => (

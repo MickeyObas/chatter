@@ -42,7 +42,7 @@ export default function MainLayout(){
                 }
                 
                 if(data['type'] === 'new_message'){
-
+                    
                     const incomingMessageChatId = data['chat_id'];
                     console.log("chatID Prop Value -> ", chatId);
                     console.log("IncomingMessageChatID Value -> ", incomingMessageChatId);

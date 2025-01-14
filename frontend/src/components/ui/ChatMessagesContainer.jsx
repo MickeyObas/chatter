@@ -4,12 +4,11 @@ import { fetchWithAuth } from '../../utils'
 import { BASE_URL } from '../../constants';
 import { useChat } from '../../context/ChatContext';
 
-export default function ChatMessagesContainer(){
+export default function ChatMessagesContainer({setUnreadMessagesCount}){
     const { chats } = useChat(); 
     const [loading, setLoading] = useState(true);
 
     // Set currently viewed chat's last message as the last_message_read
-
 
     if (chats.length === 0){
         return (
@@ -23,6 +22,7 @@ export default function ChatMessagesContainer(){
                 <ChatMessage 
                     key={idx}
                     chatmessage={chatmessage}
+                    setUnreadMessagesCount={setUnreadMessagesCount}
                 />
             ))} 
             <p></p>          

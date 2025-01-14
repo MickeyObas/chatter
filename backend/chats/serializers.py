@@ -26,6 +26,7 @@ class ChatSerializer(serializers.ModelSerializer):
 class ChatDisplaySerializer(serializers.ModelSerializer):
     latest_message = serializers.SerializerMethodField()
     user = UserSummarySerializer()
+    unread_messages_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Chat
@@ -33,9 +34,13 @@ class ChatDisplaySerializer(serializers.ModelSerializer):
             'id',
             'user',
             'latest_message',
+            'unread_messages_count',
             'created_at',
             'updated_at',
         ]
+
+    def get_unread_messages_count(self, obj):
+        return obj.messages.filter(is_read=False).count()
 
     def get_latest_message(self, obj):
         try:

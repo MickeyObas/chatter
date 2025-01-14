@@ -5,7 +5,7 @@ import { fetchWithAuth, getProfilePicture, timeAgo } from '../../utils';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
-export default function ChatMessage({ chatmessage }){
+export default function ChatMessage({ chatmessage, setUnreadMessagesCount }){
     
     const [lastMessageIsRead, setLastMessageIsRead] = useState(
         chatmessage.latest_message ? chatmessage?.latest_message?.is_read : true
@@ -19,6 +19,7 @@ export default function ChatMessage({ chatmessage }){
 
     const handleChatClick = async (inputChatId) => {
         setChatId(inputChatId);
+        setUnreadMessagesCount((prev) => prev - chatmessage.unread_messages_count)
         localStorage.setItem('chatId', inputChatId);
 
         try {
@@ -64,7 +65,9 @@ export default function ChatMessage({ chatmessage }){
                         chatmessage?.latest_message?.content ? chatmessage?.latest_message.content : ''
                         }</p>
                     {!lastMessageIsRead && (
-                        <div className='w-1.5 h-1.5 rounded-[50%] bg-green-500 me-2'></div>
+                        <div className='w-5 h-5 flex justify-center items-center rounded-[50%] bg-red-500 me-2'>
+                            <p className='text-[10px] text-white'>{chatmessage.unread_messages_count}</p>
+                        </div>
                     )}  
                 </div>
             </div>

@@ -14,7 +14,6 @@ class Message(models.Model):
     def __str__(self):
         return self.content
 
-    
     class Meta:
         get_latest_by = 'created_at'
         ordering = ['created_at']
