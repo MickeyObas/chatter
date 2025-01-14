@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import GroupInboxMessageSection from '../../components/ui/GroupInboxMessageSection'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { fetchWithAuth } from '../../utils';
 import { BASE_URL } from '../../constants';
 import GroupChatMessagesSection from '../../components/ui/GroupChatMessagesSection';
@@ -14,6 +14,7 @@ function Group() {
   const groupChatSocket = useRef(null);
   const { user } = useAuth();
   const { groupChats, setGroupChats } = useChat();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const openConnection = async () => {
@@ -79,6 +80,39 @@ function Group() {
     fetchGroupChat();
 
   }, [groupId]);
+
+  useEffect (() => {
+    const setMessagesAsRead = async () => {
+      try {
+        const response = await fetchWithAuth(`${BASE_URL}/messages/groups/${groupId}/mark-as-read/`, {
+            method: 'POST'
+        });
+
+        if(!response.ok){
+            console.log("Whoops, couldn't set messages as read.");
+        }else{
+            const data = await response.json();
+            console.log(data);
+            setGroupChats((prev) => {
+                const index = prev.findIndex(gc => gc.id === groupId);
+                const updatedChats = [...prev];
+                const updatedChat = {...prev[index], unread_messages_count: 0};
+
+                updatedChats[index] = updatedChat;
+
+                console.log("ZEEEEEE: ", updatedChats);
+
+                return updatedChats;
+            })
+        };
+    }catch(err){
+        console.error(err);
+    }};
+
+    setMessagesAsRead();
+
+  }, [groupId])
+
 
 
   return (

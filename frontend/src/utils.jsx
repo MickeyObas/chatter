@@ -97,7 +97,6 @@ export const getProfilePicture = (profilePicture) => {
     return profilePicture 
         ? BASE_URL.replace('/api', '') + profilePicture
         : defaultProfilePicture
-
 }
 
 

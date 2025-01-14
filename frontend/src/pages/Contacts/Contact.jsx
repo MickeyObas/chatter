@@ -196,7 +196,7 @@ function Contact() {
                     contacts.map((contact, idx) => (
                     <div 
                         key={idx} 
-                        className={`flex items-center py-1.5 px-2.5 rounded-full cursor-pointer ${selectedContactId === contact.id ? 'bg-blue-500 text-white hover:bg-blue-500' : 'hover:bg-slate-100'}`}
+                        className={`flex items-center py-1.5 px-2 rounded-full cursor-pointer ${selectedContactId === contact.id ? 'bg-blue-500 text-white hover:bg-blue-500' : 'hover:bg-slate-100'}`}
                         onClick={() => handleContactClick(contact.id)}
                         >
                         <div className={`w-10 h-10 flex items-center justify-center rounded-[50%] overflow-hidden ${selectedContactId === contact.id ? 'outline outline-[1.5px]' : ''}`}>

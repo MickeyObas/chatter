@@ -2,7 +2,6 @@ import React from 'react'
 import { getProfilePicture, formatDatetime } from '../../utils'
 
 export default function GroupInboxMessage({ message, ownerIsSender, user}){
-
     if(!ownerIsSender){
         return (
         <div className='flex w-[70%] items-center'>

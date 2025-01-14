@@ -28,6 +28,12 @@ function Groups() {
   const [newGroupPicture, setNewGroupPicture] = useState(cameraIcon);
   const groupPictureInputRef = useRef(null);
 
+  const zeroUnreadMessagesGroupChats = groupChats.filter((groupChat) => groupChat.unread_messages_count === 0);
+
+  const nonZeroUnreadMessagesGroupChats = groupChats.filter((groupChat) => groupChat.unread_messages_count > 0);
+
+  console.log(zeroUnreadMessagesGroupChats);
+
   const GroupCreatedMessage = ({ closeToast, toastProps }) => (
     <div>
         <p className="text-[13px]">Your new group has been created.</p>
@@ -268,8 +274,8 @@ function Groups() {
               </div>
             </div>
             {/* Groups Container */}
-            <div className='flex flex-col mt-3.5 gap-y-2 overflow-y-auto px-1 max-h-[80vh] overflow-hidden'>
-            {groupChats && groupChats.map((groupChat, idx) => (
+            <div className='flex flex-col mt-3.5 gap-y-1.5 overflow-y-auto px-3.5 max-h-[80vh] overflow-hidden'>
+            {groupChats && [...nonZeroUnreadMessagesGroupChats, ...zeroUnreadMessagesGroupChats].map((groupChat, idx) => (
               <div 
                 key={idx} 
                 className={`flex items-center p-2 cursor-pointer  rounded-full ${groupChat.id === selectedGroupChatId ? 'bg-blue-500 text-white' : 'hover:bg-slate-200'}`}
@@ -282,9 +288,11 @@ function Groups() {
                   <h2 className="text-sm">{groupChat.title}</h2>
                   <p className="text-[10px]">{groupChat.description}</p>
                 </div>
-                <div className="bg-blue-500 w-6 h-6 rounded-[50%] flex justify-center items-center text-white ms-auto border border-white">
-                  <h2 className="text-[10px]">99</h2>
+                {groupChat.unread_messages_count > 0 && (
+                  <div className={`bg-blue-500 w-6 h-6 rounded-[50%] flex justify-center items-center  ms-auto border ${selectedGroupChatId === groupChat.id ? 'bg-white text-black border-black' : 'text-white border-white'}`}>
+                  <h2 className="text-[10px]">{groupChat.unread_messages_count}</h2>
                 </div>
+                )}
               </div>
             ))}
             </div>

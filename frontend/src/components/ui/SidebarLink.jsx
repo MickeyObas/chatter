@@ -1,16 +1,46 @@
 import PropTypes from 'prop-types';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useChat } from '../../context/ChatContext';
+import { useState, useEffect } from 'react';
 
 export default function SidebarLink({
     title="Link Title",
     Icon,
-    path,
-    notificationCount=99,
+    path
 }){
 
     const navigate = useNavigate();
     const location = useLocation();
     const isActive = location.pathname == path;
+    const { chats, groupChats } = useChat();
+    let notificationCount;
+
+     const [unreadMessagesCount, setUnreadMessagesCount] = useState();
+     const [unreadGCMessagesCount, setUnreadGCMessagesCount] = useState();
+    
+    useEffect(() => {
+        const unreadMessagesCounter = chats.reduce((accumulator, chat) => {
+            return accumulator += chat.unread_messages_count;
+        }, 0);
+        setUnreadMessagesCount(unreadMessagesCounter);
+    }, [chats]);
+
+    useEffect(() => {
+        const unreadGCMessagesCounter = groupChats.reduce((accumulator, chat) => {
+            return accumulator += chat.unread_messages_count;
+        }, 0);
+        setUnreadGCMessagesCount(unreadGCMessagesCounter);
+    }, [groupChats]);
+
+
+
+    if(title === 'Home'){
+        notificationCount = unreadMessagesCount;
+    }else if(title === 'Groups'){
+        notificationCount = unreadGCMessagesCount;
+    }else{
+        notificationCount = 0;
+    }
 
     return (
         <a       
@@ -22,7 +52,10 @@ export default function SidebarLink({
                 <Icon />
                 <h2 className='ms-2 text-[13px]'>{title}</h2>
             </div>
-            {/* <div className='h-5 w-6 rounded-full bg-white border-[1.5px] border-slate-200 flex items-center justify-center text-[10px] px-2.5 py-1.5 text-slate-700'>{notificationCount}</div> */}
+            {notificationCount > 0 && (
+                <div className={`h-[18px] w-[18px] rounded-full bg-slate-100 border-slate-200 flex items-center justify-center text-[10px] text-slate-600 ${isActive ? '' : '' }`}>{notificationCount}</div>
+            )}
+            
         </a>
     )
 }
