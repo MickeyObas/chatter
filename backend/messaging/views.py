@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import (
@@ -9,8 +10,11 @@ from .serializers import (
     MessageSerializer,
     CreateMessageSerializer
 )
-from chats.models import Chat
+from chats.models import Chat, GroupChat
 from accounts.models import CustomUser
+from .models import (
+    GroupChatMessageReadStatus
+)   
 
 
 @api_view(['POST'])
@@ -70,3 +74,39 @@ def create_message(request):
     return Response(owner_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+def mark_group_messages_as_read(request, groupchat_id):
+    user = request.user
+    groupchat = GroupChat.objects.get(id=groupchat_id)
+
+    # Get the unread messages for the group
+    last_read_group_message_timestamp = GroupChatMessageReadStatus.objects.filter(
+        user=user,
+        message__groupchat=groupchat_id
+    )
+
+    # If no last read message, user has not read any message in the group
+    if not last_read_group_message_timestamp.exists():
+        unread_messages = groupchat.groupchatmessage_set.all().exclude(
+            sender=user
+        )
+    else:
+        last_read_group_message = last_read_group_message_timestamp.latest()
+        time_boundary = last_read_group_message.read_at
+        unread_messages = groupchat.groupchatmessage_set.filter(
+            created_at__gte=time_boundary
+        ).exclude(sender=user)
+
+    message_ids = unread_messages.values_list('id', flat=True)
+
+    # Create GCMRS objects for all of them
+    read_status = [
+        GroupChatMessageReadStatus(message_id=msg_id, user_id=user.id, read_at=timezone.now())
+        for msg_id in message_ids
+    ]
+
+    GroupChatMessageReadStatus.objects.bulk_create(read_status, ignore_conflicts=True)
+
+    return Response({'test': 'successful'})    
+
+    

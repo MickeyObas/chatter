@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Message, GroupChatMessage
+from .models import Message, GroupChatMessage, GroupChatMessageReadStatus
 
 
 class MessageModelAdmin(admin.ModelAdmin):
@@ -11,3 +11,4 @@ class GroupChatMessageModelAdmin(admin.ModelAdmin):
 
 admin.site.register(Message, MessageModelAdmin)
 admin.site.register(GroupChatMessage, GroupChatMessageModelAdmin)
+admin.site.register(GroupChatMessageReadStatus)

@@ -148,7 +148,7 @@ def group_chat_list_or_create(request):
     # )
     if request.method == 'GET':
         group_chats = GroupChat.order_by_latest_message(user)
-        serializer = GroupChatDisplaySerializer(group_chats, many=True)
+        serializer = GroupChatDisplaySerializer(group_chats, many=True, context={"user_id": user.id})
         return Response(serializer.data)
     else:
         data = request.data
@@ -169,7 +169,7 @@ def group_chat_list_or_create(request):
 
         if serializer.is_valid():
             new_group_chat = serializer.save()
-            serializer = GroupChatDisplaySerializer(new_group_chat)
+            serializer = GroupChatDisplaySerializer(new_group_chat, context={"user_id": user.id})
             return Response(serializer.data)
         else:
             print(serializer.errors)

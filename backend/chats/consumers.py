@@ -53,9 +53,9 @@ def get_message(message_id):
     return MessageSerializer(message).data
 
 @database_sync_to_async
-def get_group_chat(groupchat_id):
+def get_group_chat(groupchat_id, user_id):
     groupchat = GroupChat.objects.get(id=groupchat_id)
-    return GroupChatDisplaySerializer(groupchat).data
+    return GroupChatDisplaySerializer(groupchat, context={'user_id': user_id}).data
 
 @database_sync_to_async
 def get_group_chat_detail(groupchat_id):
@@ -259,7 +259,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         }))
 
     async def notification_group_message(self, event):
-        groupchat = await get_group_chat(event['groupchat_id'])
+        groupchat = await get_group_chat(event['groupchat_id'], self.user_id)
         event['groupchat'] = groupchat
         event['type'] = 'groupchat_message'
         await self.send(text_data=json.dumps(event))
@@ -358,6 +358,6 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
 
 
     async def groupchat_message(self, event):
-        groupchat = await get_group_chat(event['groupchat_id'])
+        groupchat = await get_group_chat(event['groupchat_id'], self.user_id)
         event['groupchat'] = groupchat
         await self.send(text_data=json.dumps(event))

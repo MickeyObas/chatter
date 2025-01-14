@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Chat, GroupChat
+from messaging.models import Message, GroupChatMessageReadStatus
 from accounts.models import CustomUser
 from accounts.serializers import UserSummarySerializer
 from messaging.serializers import MessageSerializer, GroupChatMessageSerializer
@@ -114,6 +115,9 @@ class GroupChatCreateSerializer(serializers.ModelSerializer):
 
 class GroupChatDisplaySerializer(serializers.ModelSerializer):
     latest_message = serializers.SerializerMethodField(read_only=True)
+    unread_messages_count = serializers.SerializerMethodField()
+    total_messages_count = serializers.SerializerMethodField()
+
     class Meta:
         model = GroupChat
         fields = [
@@ -121,17 +125,44 @@ class GroupChatDisplaySerializer(serializers.ModelSerializer):
             'title',
             'owner',
             'latest_message',
+            'total_messages_count',
+            'unread_messages_count',
             'description',
             'picture',
             'created_at'
         ]
 
+    def get_unread_messages_count(self, obj):
+        user_id = self.context.get('user_id')
+        user = CustomUser.objects.get(id=user_id)
+
+        last_read_group_message_timestamp = GroupChatMessageReadStatus.objects.filter(
+            user=user,
+            message__groupchat=obj.id
+        )
+
+        if not last_read_group_message_timestamp.exists():
+            unread_messages = obj.groupchatmessage_set.all().exclude(
+                sender=user
+            )
+        else:
+            last_read_group_message = last_read_group_message_timestamp.latest()
+            time_boundary = last_read_group_message.read_at
+            unread_messages = obj.groupchatmessage_set.filter(
+                created_at__gte=time_boundary
+            ).exclude(sender=user)
+
+        return unread_messages.count()
+
+    def get_total_messages_count(self, obj):
+        return obj.groupchatmessage_set.count()
+        
     def get_latest_message(self, obj):
         try:
             latest_message = obj.groupchatmessage_set.latest()
             if latest_message:
                 return {
-                    "sender": f"{latest_message.sender.first_name} {latest_message.sender.last_name}",
+                    "sender": latest_message.sender.id,
                     "content": latest_message.content,
                     "created_at": latest_message.created_at.isoformat(),
                 }

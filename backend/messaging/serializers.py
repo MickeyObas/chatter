@@ -37,6 +37,7 @@ class GroupChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupChatMessage
         fields = [
+            'id',
             'groupchat',
             'sender',
             'content',

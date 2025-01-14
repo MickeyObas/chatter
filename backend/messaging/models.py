@@ -31,6 +31,16 @@ class GroupChatMessage(models.Model):
         ordering = ['created_at']
     
 
+class GroupChatMessageReadStatus(models.Model):
+    message = models.ForeignKey('messaging.GroupChatMessage', on_delete=models.CASCADE)
+    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    read_at = models.DateTimeField()
+
+    class Meta:
+        get_latest_by = 'read_at'
+
+    def __str__(self):
+        return f"{self.message.sender.email} -> {self.message.content}"
 
 
 
