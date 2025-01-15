@@ -18,9 +18,6 @@ export default function ActiveUsers(){
     const { onlineContacts } = useOnlineContacts();
     const { loading } = useContact();
 
-    // console.log("Online Users: ", onlineUsers);
-    // console.log("Contacts: ", contacts);
-
     if(loading) return (
         <div className='flex self-start flex-col mt-6 h-[20%] w-full max-w-full'>
             <h1 className='text-[13px] font-semibold'>Active</h1>

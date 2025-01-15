@@ -6,9 +6,6 @@ import { useChat } from '../../context/ChatContext';
 
 export default function ChatMessagesContainer({setUnreadMessagesCount}){
     const { chats } = useChat(); 
-    const [loading, setLoading] = useState(true);
-
-    // Set currently viewed chat's last message as the last_message_read
 
     if (chats.length === 0){
         return (

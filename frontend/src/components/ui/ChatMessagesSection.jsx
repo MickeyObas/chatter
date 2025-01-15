@@ -5,7 +5,6 @@ import ActiveUsers from './ActiveUsers';
 import ChatMessagesContainer from './ChatMessagesContainer';
 import { useEffect, useState } from 'react';
 
-
 export default function ChatMessagesSection({ isStandalone }){
     const { chats } = useChat();
 
@@ -19,6 +18,7 @@ export default function ChatMessagesSection({ isStandalone }){
     }, [chats])
  
     const width = isStandalone ? 'w-[24vw]' : 'w-[32%]';
+
     return (
         <div className={`h-screen border-e border-e-slate-300 py-4 px-5 ${width}`}>
             <div className='flex flex-col items-center h-full w-full'>

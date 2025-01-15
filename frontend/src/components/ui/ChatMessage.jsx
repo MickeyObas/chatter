@@ -4,12 +4,24 @@ import { useChat } from '../../context/ChatContext';
 import { fetchWithAuth, getProfilePicture, timeAgo } from '../../utils';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import { useContact } from '../../context/ContactContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function ChatMessage({ chatmessage, setUnreadMessagesCount }){
     
     const [lastMessageIsRead, setLastMessageIsRead] = useState(
         chatmessage.latest_message ? chatmessage?.latest_message?.is_read : true
-    )
+    );
+
+    const { contacts } = useContact();
+    const { user } = useAuth();
+
+    const getContact = (id) => {
+        const someContact = contacts.find((contact) => contact?.contact_user?.id === id);
+        return someContact;
+    };
+
+    const senderDisplay = user.id === chatmessage.latest_message.sender ? "You" : getContact(chatmessage.latest_message.sender)?.contact_user.name?.split(' ')[0];
 
     useEffect(() => {
         setLastMessageIsRead(chatmessage?.latest_message?.is_read);
@@ -62,7 +74,7 @@ export default function ChatMessage({ chatmessage, setUnreadMessagesCount }){
             <div className='mt-2.5 ps-5'>
                 <div className='flex justify-between'>
                     <p className='text-[11px] leading-4 message-content-display'>{
-                        chatmessage?.latest_message?.content ? chatmessage?.latest_message.content : ''
+                        chatmessage?.latest_message?.content ? senderDisplay + ": " + chatmessage?.latest_message.content : ''
                         }</p>
                     {!lastMessageIsRead && (
                         <div className='w-5 h-5 flex justify-center items-center rounded-[50%] bg-red-500 me-2'>

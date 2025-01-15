@@ -13,12 +13,13 @@ import { TbLogout2 } from "react-icons/tb";
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import {fetchWithAuth} from '../../utils';
+import {fetchWithAuth, getProfilePicture} from '../../utils';
 import { BASE_URL } from '../../constants';
 
 
 export default function Sidebar(){
     const { user, logout } = useAuth();
+    console.log("USAAAAAAH", user);
     const navigate = useNavigate();
     const location = useLocation();
     const sidebarLinks = [
@@ -40,12 +41,12 @@ export default function Sidebar(){
             notificationCount: 0,
             path: "/groups"
         },
-        {
-            title: "Notifications",
-            icon: NotificationIcon,
-            notificationCount: 0,
-            path: "/notifications"
-        },
+        // {
+        //     title: "Notifications",
+        //     icon: NotificationIcon,
+        //     notificationCount: 0,
+        //     path: "/notifications"
+        // },
          {
              title: "Help",
              icon: HelpIcon,
@@ -129,9 +130,11 @@ export default function Sidebar(){
                             99
                             </div> */}
                         </div>
-                        <div className='flex  border-[1.5px] border-slate-200 p-2 rounded-md mt-3'>
-                            <img src={profile} alt="" className='h-7'/>
-                            <div className='flex flex-col text-[11px] ms-2.5'>
+                        <div className='flex items-center py-2.5 px-1.5 border-[1.5px] rounded-lg mt-3.5'>
+                            <div className='flex w-9 h-9 border-slate-200 rounded-full items-center overflow-hidden'>
+                                <img src={getProfilePicture(user.profile_picture)} alt="" className='w-full h-full object-cover'/>
+                            </div>
+                            <div className='flex flex-col justify-center text-[11px] ms-2.5'>
                                 <h2>{user?.first_name} {user?.last_name}</h2>
                                 <h3>@{user?.email.split('@')[0]}</h3>
                             </div>

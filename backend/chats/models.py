@@ -64,3 +64,40 @@ class GroupChat(models.Model):
     def __str__(self):
         return self.title
         
+
+filtered_colors = [
+    "#FF5733",  # Fiery Orange
+    "#33FF57",  # Bright Green
+    "#3357FF",  # Vivid Blue
+    "#FF33A8",  # Vibrant Pink
+    "#800080",  # Purple
+    "#FF4500",  # Orange Red
+    "#2E8B57",  # Sea Green
+    "#8A2BE2",  # Blue Violet
+    "#DC143C",  # Crimson
+    "#00FA9A",  # Medium Spring Green
+    "#FF6347",  # Tomato
+    "#4682B4",  # Steel Blue
+    "#D2691E",  # Chocolate
+    "#FF1493",  # Deep Pink
+    "#6495ED",  # Cornflower Blue
+    "#9ACD32",  # Yellow Green
+    "#EE82EE",  # Violet
+    "#5F9EA0",  # Cadet Blue
+    "#808080",  # Gray
+    "#191970",  # Midnight Blue
+    "#FFA07A",  # Light Salmon
+    "#32CD32",  # Lime Green
+    "#BA55D3",  # Medium Orchid
+    "#800000",  # Maroon
+]
+
+
+class UserGroupContactColorMap(models.Model):
+    user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='user_group_contact_color_maps')
+    group = models.ForeignKey('chats.GroupChat', on_delete=models.CASCADE)
+    contact_user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    color = models.CharField(max_length=8)
+
+    def __str__(self):
+        return f"{self.user} -> {self.contact_user.email} : {self.color}"

@@ -153,7 +153,7 @@ def group_chat_list_or_create(request):
     else:
         data = request.data
         title = data['title'].strip()
-        picture = data['picture']
+        picture = data.get('picture', None)
         member_ids = [int(x) for x in data['members'].split(',')] + [user.id]
         admin_ids = [user.id]
 
@@ -169,6 +169,13 @@ def group_chat_list_or_create(request):
 
         if serializer.is_valid():
             new_group_chat = serializer.save()
+
+            # TODO: Take every member of the group and create a UGCCM for each
+            for member in new_group_chat.members.exclude(
+                id=user.id
+            ):
+                print(member)
+
             serializer = GroupChatDisplaySerializer(new_group_chat, context={"user_id": user.id})
             return Response(serializer.data)
         else:

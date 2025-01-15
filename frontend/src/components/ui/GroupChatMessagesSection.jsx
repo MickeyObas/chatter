@@ -16,7 +16,6 @@ function formatTime(dateString) {
     return `${hours}:${minutes}${ampm}`; // Format the time
   }
   
-  // Example usage:
   const isoDate = "2025-01-13T15:56:45.219198Z";
   console.log(formatTime(isoDate)); // Output: "3:56pm"
   

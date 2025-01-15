@@ -6,6 +6,7 @@ export default function Button({
     type = 'button',
     customClass = '',
     onClick,
+    textColor='text-white'
 }){
 
     return (
@@ -13,7 +14,7 @@ export default function Button({
             type={type}
             onClick={onClick}
             disabled={loading}
-            className={`bg-blue-600 text-white py-1.5 px-3 rounded-lg hover:bg-blue-500 flex justify-center items-center ${loading && 'cursor-not-allowed'} ${customClass}`}
+            className={`bg-blue-600 ${textColor} py-1.5 px-3 rounded-lg hover:bg-blue-500 flex justify-center items-center ${loading && 'cursor-not-allowed'} ${customClass}`}
             >{!loading ? 
                 text : 
                 (<svg width="13" height="24" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg"

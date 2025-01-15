@@ -9,6 +9,10 @@ export function AuthProvider({children}){
     );
 
     useEffect(() => {
+        
+    })
+
+    useEffect(() => {
         try{
             const storedUser = JSON.parse(localStorage.getItem('user'));
             if(storedUser){

@@ -43,6 +43,7 @@ def login(request):
             return Response({'error': 'Email is not verified. Please check your email to complete registration.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             refresh = RefreshToken.for_user(user)
+            profile_picture = user.profile_picture.url if user.profile_picture else None
             return Response({
             'refresh': str(refresh),
             'access': str(refresh.access_token),
@@ -51,6 +52,7 @@ def login(request):
                 'email': user.email,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
+                'profile_picture': profile_picture
             },
             'is_first_login': user.is_first_login
         }, status=status.HTTP_200_OK)

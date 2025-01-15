@@ -48,15 +48,14 @@ class ChatDisplaySerializer(serializers.ModelSerializer):
             latest_message =  obj.messages.latest()
             if latest_message:
                 return {
+                    "sender": latest_message.sender.id,
                     "content": latest_message.content,
                     "created_at": latest_message.created_at.isoformat(),
                     "is_read": latest_message.is_read
                 }
             
         except obj.messages.model.DoesNotExist:
-            {
-                "created_at": obj.created_at.isoformat()
-            }
+            return None
 
 
 class GroupChatSerializer(serializers.ModelSerializer):

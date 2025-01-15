@@ -81,11 +81,27 @@ function Groups() {
     setStep(2);
   }
 
-  const handleCheckboxChange = (e) => {
-    const {value, checked} = e.target;
+  const handleContactNewGroupClick = (e) => {
+    const contactDiv = e.target.closest('.contact');
+    const checkbox = contactDiv.querySelector('input');
+    const value = checkbox.value;
     
-    setSelected((prev) => checked ? [...prev, value] : prev.filter((item) => item !== value));
-  };
+    setSelected((prev) => {
+      if(prev.includes(value)){
+        checkbox.checked = false;
+        return prev.filter((item) => item !== value);
+      }else{
+        checkbox.checked = true;
+        return [...prev, value];
+      }
+    })
+  }
+
+  // const handleCheckboxChange = (e) => {
+  //   const {value, checked} = e.target;
+    
+  //   setSelected((prev) => checked ? [...prev, value] : prev.filter((item) => item !== value));
+  // };
 
   const handleGroupNameChange = (e) => {
     setNewGroupName(e.target.value);
@@ -109,6 +125,7 @@ function Groups() {
 
   const handleGroupUpload = async () => {
     const formData = new FormData();
+    if(!newGroupName) return;
 
     if(selectedFile){
       formData.append('picture', selectedFile);
@@ -144,13 +161,13 @@ function Groups() {
   console.log(selected);
 
   return (
-    <div className="flex w-[80%] h-full">
+    <div className="flex w-[80%] h-full relative">
       <ToastContainer />
-        <div className="w-[60%] flex flex-col border-e border-e-slate-300 h-full relative"> {/* px-3 py-4 */}
+        <div className="w-[60%] flex flex-col border-e border-e-slate-300 h-full"> {/* px-3 py-4 */}
           {showCreateGroupModal && (
             <div className="contact-modal-overlay absolute w-full h-full flex items-center justify-center">
             {step === 1 ? (
-              <div className="w-[60%] h-[88%] bg-white shadow-lg rounded-lg">
+              <div className="w-[40%] h-[88%] bg-white shadow-lg rounded-lg">
               <div className="flex flex-col">
                 <div className="flex justify-between items-center px-2.5">
                   <h5 
@@ -159,7 +176,7 @@ function Groups() {
                     >Cancel</h5>
                   <h2 className="text-center mt-1.5">Add members</h2>
                   <h5 
-                    className={`text-xs cursor-pointer ${selected.length === 0 && 'cursor-no-drop'}`}
+                    className={`text-xs ${selected.length === 0 ? 'cursor-no-drop' : 'cursor-pointer' }`}
                     onClick={handleContinueClick}
                     >Continue</h5>
                 </div>
@@ -172,7 +189,10 @@ function Groups() {
                 </div>
                 <div className="flex flex-col mt-2">
                   {contacts?.length > 0 ? contacts?.map((contact, idx) => (
-                    <div key={idx} className="flex items-center py-2.5 px-4">
+                    <div 
+                      key={idx} className="contact flex items-center py-2.5 px-4 cursor-pointer"
+                      onClick={handleContactNewGroupClick}
+                      >
                       <div className="h-10 w-10 rounded-full overflow-hidden">
                         <img src={getProfilePicture(contact?.contact_user?.profile_picture)} alt="" className="w-full h-full object-cover"/>
                       </div>
@@ -184,8 +204,8 @@ function Groups() {
                         <input 
                           type="checkbox" 
                           value={contact.contact_user.id} 
-                          className="scale-110 cursor-pointer"
-                          onChange={handleCheckboxChange}
+                          className="check scale-110 cursor-pointer"
+                          // onChange={handleCheckboxChange}
                           checked={selected.includes(contact.contact_user.id.toString())}
                           />
                       </div>
@@ -197,7 +217,7 @@ function Groups() {
               </div>
             </div>
             ) : (
-              <div className="w-[60%] h-[88%] bg-white shadow-lg rounded-lg">
+              <div className="w-[40%] h-[88%] bg-white shadow-lg rounded-lg">
               <div className="flex flex-col">
                 <div className="flex justify-between items-center px-2.5">
                   <h5 

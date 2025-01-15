@@ -157,8 +157,9 @@ function Contact() {
                                 />
                                 <Button 
                                     text='Cancel'
-                                    customClass='text-xs ms-1 bg-red-500 hover:bg-red-400'
+                                    customClass='text-xs ms-1 bg-slate-100 hover:bg-slate-100'
                                     onClick={handleCancelClick}
+                                    textColor='text-black'
                                 />
                                 <Button 
                                     text='Add'
@@ -196,7 +197,7 @@ function Contact() {
                     contacts.map((contact, idx) => (
                     <div 
                         key={idx} 
-                        className={`flex items-center py-1.5 px-2 rounded-full cursor-pointer ${selectedContactId === contact.id ? 'bg-blue-500 text-white hover:bg-blue-500' : 'hover:bg-slate-100'}`}
+                        className={`flex items-center py-2.5 px-2 rounded-full cursor-pointer ${selectedContactId === contact.id ? 'bg-blue-500 text-white hover:bg-blue-500' : 'hover:bg-slate-100'}`}
                         onClick={() => handleContactClick(contact.id)}
                         >
                         <div className={`w-10 h-10 flex items-center justify-center rounded-[50%] overflow-hidden ${selectedContactId === contact.id ? 'outline outline-[1.5px]' : ''}`}>
@@ -206,7 +207,7 @@ function Contact() {
                             <div className='flex'>
                                 <h2 className='text-sm'>{contact.contact_user.name}</h2>
                             </div>
-                            <p className={`contact-status-text text-[10px] ${selectedContactId === contact.id ? 'text-slate-100' : 'text-slate-600'}`}>{contact.contact_user.status_text}</p>
+                            <p className={`contact-status-text text-[10px] ${selectedContactId === contact.id ? 'text-slate-100' : 'text-slate-600'}`}>{contact.contact_user.status_text?.length > 0 ? contact.contact_user.status_text : "Hey there, I'm using Chatter."}</p>
                         </div>
                         <div className='w-7 h-7 border border-slate-300 rounded-full flex items-center justify-center ms-auto'>
                             <IoMdStarOutline size={"20px"}/>
@@ -245,8 +246,8 @@ function Contact() {
                         <div>@{selectedContact.contact_user.email}</div>
                     </div>
                     <div className='flex flex-col gap-y-2.5 mt-5 px-4'>
-                        <div className='bg-slate-200 py-3 px-3 rounded-lg h-[4em] max-h-[4em] overflow-y-auto flex items-center'>
-                            <p className='text-xs py-1'>{selectedContact.contact_user.status_text}</p>
+                        <div className='bg-slate-200 py-3 px-3 rounded-lg h-[4em] max-h-[4em] overflow-y-auto flex items-center justify-center'>
+                            <p className='text-xs py-1'>{selectedContact.contact_user.status_text?.length > 0 ? selectedContact.contact_user?.status_text : "Hey there, I'm using Chatter."}</p>
                         </div>
                         <div 
                             className='bg-slate-200 py-3 px-3 rounded-lg flex justify-center mb-5 cursor-pointer hover:bg-slate-300'

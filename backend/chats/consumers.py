@@ -31,6 +31,7 @@ from backend.config.redis_client import redis_client
 import asyncio
 from channels.exceptions import StopConsumer
 
+
 @database_sync_to_async
 def get_chat_display(chat_id):
     chat = Chat.objects.get(id=chat_id)
@@ -46,7 +47,6 @@ def get_chat_detail(chat_id):
     chat = Chat.objects.get(id=chat_id)
     return ChatSerializer(chat).data
 
-
 @database_sync_to_async
 def get_message(message_id):
     message = Message.objects.get(id=message_id)
@@ -61,6 +61,7 @@ def get_group_chat(groupchat_id, user_id):
 def get_group_chat_detail(groupchat_id):
     groupchat = GroupChat.objects.get(id=groupchat_id)
     return GroupChatSerializer(groupchat).data
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -78,7 +79,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
-
 
     async def disconnect(self, close_code):
 
@@ -130,15 +130,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             # Update the read_status of latest_message for sender
             new_message.is_read = True
-            await database_sync_to_async(new_message.save)()
-
-            # If the recipient is currently online (for specific chat), set the read_status of latest_message
-            
+            await database_sync_to_async(new_message.save)()            
 
             # Update the last read message for the owner chat
             owner_chat.last_read_message = new_message
             await database_sync_to_async(owner_chat.save)()
-
 
         # Send the message to the group asynchronously
             await self.channel_layer.group_send(
@@ -163,7 +159,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
         
-
     async def chat_message(self, event):
         # Handle incoming chat message event
         data = event['data']
@@ -226,7 +221,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         channel_layer = get_channel_layer()
 
         redis_client.srem("online_users", self.user_id)
-
 
     async def receive(self, text_data):
         # Handle incoming messages from the client (optional)
@@ -354,8 +348,6 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                         'groupchat_id': new_groupchat_message.groupchat.id
                     }
                 )
-
-
 
     async def groupchat_message(self, event):
         groupchat = await get_group_chat(event['groupchat_id'], self.user_id)

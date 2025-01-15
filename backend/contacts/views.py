@@ -12,7 +12,6 @@ from backend.config.redis_client import redis_client
 import json
 
 
-
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def online_contact_list(request):
