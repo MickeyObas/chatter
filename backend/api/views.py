@@ -29,7 +29,7 @@ def register(request):
 
 @api_view(['POST'])
 def login(request):
-    email = request.data.get('email')
+    email = request.data.get('email').strip().lower()
     password = request.data.get('password')
 
     if not email or not password:

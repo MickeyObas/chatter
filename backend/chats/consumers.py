@@ -58,9 +58,9 @@ def get_group_chat(groupchat_id, user_id):
     return GroupChatDisplaySerializer(groupchat, context={'user_id': user_id}).data
 
 @database_sync_to_async
-def get_group_chat_detail(groupchat_id):
+def get_group_chat_detail(groupchat_id, user_id):
     groupchat = GroupChat.objects.get(id=groupchat_id)
-    return GroupChatSerializer(groupchat).data
+    return GroupChatSerializer(groupchat, context={'user_id': user_id}).data
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -338,7 +338,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             )
 
             # Send to each user
-            groupchat_data = await get_group_chat_detail(new_groupchat_message.groupchat.id)
+            groupchat_data = await get_group_chat_detail(new_groupchat_message.groupchat.id, self.user_id)
 
             for member_id in groupchat_data['members']:
                 await self.channel_layer.group_send(

@@ -1,10 +1,20 @@
 from rest_framework import serializers
 
-from .models import Chat, GroupChat
+from .models import Chat, GroupChat, UserGroupContactColorMap
 from messaging.models import Message, GroupChatMessageReadStatus
 from accounts.models import CustomUser
 from accounts.serializers import UserSummarySerializer
 from messaging.serializers import MessageSerializer, GroupChatMessageSerializer
+
+
+class UserGroupContactColorMapSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserGroupContactColorMap
+        fields = [
+            'group',
+            'contact_user',
+            'color'
+        ]
 
 
 class ChatSerializer(serializers.ModelSerializer):
@@ -60,6 +70,7 @@ class ChatDisplaySerializer(serializers.ModelSerializer):
 
 class GroupChatSerializer(serializers.ModelSerializer):
     messages = serializers.SerializerMethodField(read_only=True)
+    contact_color_map = serializers.SerializerMethodField()
 
     class Meta:
         model = GroupChat
@@ -72,9 +83,25 @@ class GroupChatSerializer(serializers.ModelSerializer):
             'messages',
             'picture',
             'members',
+            'contact_color_map',
             'created_at',
             'updated_at'
         ]
+
+    def get_contact_color_map(self, obj):
+        user_id = self.context.get('user_id')
+        user = CustomUser.objects.get(id=user_id)
+        color_maps = UserGroupContactColorMap.objects.filter(
+            user=user,
+            group=obj
+        )
+
+        color_maps_obj = {}
+
+        for color_map in color_maps:
+            color_maps_obj[color_map.contact_user.id] = color_map.color
+
+        return color_maps_obj
 
     def get_messages(self, obj):
         messages = obj.groupchatmessage_set.all()

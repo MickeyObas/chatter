@@ -3,6 +3,8 @@ from django.conf import settings
 from django.db.models import Max
 from django.core.exceptions import ValidationError
 
+import random
+
 def validate_profile_picture(image):
     max_size_kb = 1024  
 
@@ -92,12 +94,14 @@ filtered_colors = [
     "#800000",  # Maroon
 ]
 
+def get_random_color():
+    return random.choice(filtered_colors)
 
 class UserGroupContactColorMap(models.Model):
     user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='user_group_contact_color_maps')
     group = models.ForeignKey('chats.GroupChat', on_delete=models.CASCADE)
     contact_user = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
-    color = models.CharField(max_length=8)
+    color = models.CharField(max_length=8, default=get_random_color)
 
     def __str__(self):
         return f"{self.user} -> {self.contact_user.email} : {self.color}"

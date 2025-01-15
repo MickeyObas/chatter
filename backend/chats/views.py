@@ -8,7 +8,8 @@ from rest_framework.decorators import (
 
 from .models import (
     Chat,
-    GroupChat
+    GroupChat,
+    UserGroupContactColorMap
 )
 from accounts.models import CustomUser
 from contacts.models import Contact
@@ -133,7 +134,7 @@ def set_unread_messages_to_read(request, chat_id):
 def group_chat_detail(request, pk):
     try:
         group_chat = GroupChat.objects.get(id=pk)
-        serializer = GroupChatSerializer(group_chat)
+        serializer = GroupChatSerializer(group_chat, context={'user_id': request.user.id})
         return Response(serializer.data)
     except GroupChat.DoesNotExist:
         return Response({'error': 'Requested Group Chat does not exists.'})
@@ -171,10 +172,15 @@ def group_chat_list_or_create(request):
             new_group_chat = serializer.save()
 
             # TODO: Take every member of the group and create a UGCCM for each
-            for member in new_group_chat.members.exclude(
-                id=user.id
-            ):
-                print(member)
+            for user_member in new_group_chat.members.all():
+                for other_member in new_group_chat.members.exclude(
+                    id=user_member.id
+                ):
+                    UserGroupContactColorMap.objects.create(
+                        user=user_member,
+                        group=new_group_chat,
+                        contact_user=other_member
+                    )
 
             serializer = GroupChatDisplaySerializer(new_group_chat, context={"user_id": user.id})
             return Response(serializer.data)
@@ -187,7 +193,7 @@ def group_chat_list_or_create(request):
 def add_contact_to_group(request, groupchat_id):
     try:
         groupchat = GroupChat.objects.get(id=groupchat_id)
-        user_email = request.data['email']
+        user_email = request.data['email'].strip().lower()
 
         if user_email == request.user.email:
             return Response({
@@ -210,6 +216,23 @@ def add_contact_to_group(request, groupchat_id):
             })
 
         groupchat.members.add(user_to_add)
+        groupchat.save()
+
+        for member in groupchat.members.exclude(
+            id=user_to_add.id
+        ):
+            UserGroupContactColorMap.objects.create(
+                user=user_to_add,
+                group=groupchat,
+                contact_user=member
+            ) 
+
+            UserGroupContactColorMap.objects.create(
+                user=member,
+                group=groupchat,
+                contact_user=user_to_add
+            )
+
         return Response({'message': 'User added to group successfully'})
     
     except CustomUser.DoesNotExist:

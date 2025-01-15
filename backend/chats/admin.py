@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Chat, GroupChat
+from .models import Chat, GroupChat, UserGroupContactColorMap
 
 
 class ChatModelAdmin(admin.ModelAdmin):
@@ -14,5 +14,7 @@ class GroupChatModelAdmin(admin.ModelAdmin):
     ]
 
 
+
 admin.site.register(Chat, ChatModelAdmin)
 admin.site.register(GroupChat, GroupChatModelAdmin)
+admin.site.register(UserGroupContactColorMap)
