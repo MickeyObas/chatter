@@ -44,11 +44,8 @@ export default function MainLayout(){
                 if(data['type'] === 'new_message'){
                     
                     const incomingMessageChatId = data['chat_id'];
-                    console.log("chatID Prop Value -> ", chatId);
-                    console.log("IncomingMessageChatID Value -> ", incomingMessageChatId);
 
                     if (chatId === incomingMessageChatId){
-                        console.log("Viewing Currently: ", data['chat'])
                         setMessagesReadStatus().then(() => {
                             setChats((prevChats) => {
                                 const updatedChats = prevChats.some((chat) => chat.id === incomingMessageChatId)
@@ -81,19 +78,18 @@ export default function MainLayout(){
                             return [data['chat'], ...prevChats];
                         });
                     }
-
+                
                 }else if(data['type'] === 'user_came_online'){
-                    console.log(data);
+                    let hi = "";
                     // PATCH request to update USER status
                 }else if(data['type'] === 'user_went_offline'){
-                    console.log(data);
+                    let hii = "ok";
                 }else if(data['type'] == 'groupchat_message'){
                     setGroupChats((prev) => {
                         const updatedChats = prev.some((chat) => chat.id === data.groupchat_id)
                           ? prev.filter((chat) => chat.id !== data.groupchat_id)
                           : prev;
             
-                          console.log([data.groupchat, updatedChats])
             
                           return [
                             data.groupchat,

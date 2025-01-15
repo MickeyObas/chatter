@@ -47,7 +47,6 @@ const GroupInboxMessageTextbox = forwardRef(({
 
         try{
             groupChatSocket.current.send(JSON.stringify(data))
-            console.log("Sending data");
         }catch(err){
             console.log(err);
         }finally{

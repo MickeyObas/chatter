@@ -19,7 +19,6 @@ import { BASE_URL } from '../../constants';
 
 export default function Sidebar(){
     const { user, logout } = useAuth();
-    console.log("USAAAAAAH", user);
     const navigate = useNavigate();
     const location = useLocation();
     const sidebarLinks = [

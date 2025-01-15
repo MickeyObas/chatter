@@ -6,7 +6,7 @@ import { useState } from "react";
 import { BASE_URL } from "../../constants";
 
 
-function GroupInboxHeader({groupChat}) {
+function GroupInboxHeader({groupChat, displayContactAddedToast}) {
     const [showGroupChatOptions, setShowGroupChatOptions] = useState(false);
     const [error, setError] = useState('');
     const [contactToAdd, setContactToAdd] = useState('');
@@ -49,6 +49,7 @@ function GroupInboxHeader({groupChat}) {
                     if(data.error){
                         setError(data.error);
                     }else{
+                        displayContactAddedToast(contactToAdd, groupChat.title);
                         setContactToAdd('');
                     }
                 }
@@ -102,8 +103,9 @@ function GroupInboxHeader({groupChat}) {
                             />
                             <Button 
                                 text='Cancel'
-                                customClass='text-xs ms-1 bg-red-500 hover:bg-red-400'
+                                customClass='text-xs ms-1 bg-slate-100 hover:bg-slate-100'
                                 onClick={handleCancelClick}
+                                textColor='text-black'
                             />
                             <Button 
                                 text='Add'

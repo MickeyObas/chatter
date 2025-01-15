@@ -7,8 +7,6 @@ const GroupInboxMessagesContainer = forwardRef(({groupChat, messageTextAreaRef},
     
     const messagesEndRef = useRef(null);
     const { user } = useAuth();
-    console.log(groupChat?.messages);
-
     useLayoutEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
     }, [groupChat?.messages]);
@@ -39,6 +37,7 @@ const GroupInboxMessagesContainer = forwardRef(({groupChat, messageTextAreaRef},
                     message={message}
                     ownerIsSender={message?.sender?.id===user.id}
                     user={user}
+                    colorMap={groupChat?.contact_color_map}
                 />
             )) : (
                 <div>

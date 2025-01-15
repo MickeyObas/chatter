@@ -18,7 +18,6 @@ function Profile() {
     const { userId } = useParams();
     const { onlineUserz } = useOnlineContacts();
     const isOnline = onlineUserz?.includes(parseInt(userId));
-    console.log(isOnline);
 
     const profilePicInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -92,7 +91,6 @@ function Profile() {
         );
 
     const displayProfileUpdateToast = () => {
-        console.log("Sending toast");
         toast.success(ProfileUpdateMessage, {
             position: "top-right",
             autoClose: 5000,

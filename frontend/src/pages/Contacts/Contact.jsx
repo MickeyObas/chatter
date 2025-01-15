@@ -10,6 +10,11 @@ import { useContact } from '../../context/ContactContext';
 import Button from '../../components/form/Button';
 import Input from '../../components/form/Input';
 
+// Toast Notification
+import { Slide, Bounce, ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import { useOnlineContacts } from "../../context/OnlineContactsContext";
+
 function Contact() {
     const { contacts, loading, setContacts } = useContact();
     const [selectedContactId, setSelectedContactId] = useState(null);
@@ -24,6 +29,29 @@ function Contact() {
     const [addingContactLoading, setAddingContactLoading] = useState(false);
 
     const navigate = useNavigate();
+
+    const ContactAddedMessage = ({ data }) => (
+        <div>
+            <p className="text-[11px]">User "{data?.user}" has been added to your contacts.</p>
+        </div>
+        );
+    
+      const displayContactAddedToast = (contact) => {
+        toast.success(ContactAddedMessage, {
+            data: {
+              user: contact,
+            },
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+            });
+        }
 
     const handleKeyPress = (e) => {
         if(e.key === 'Enter'){
@@ -62,7 +90,6 @@ function Contact() {
     };
 
     const handleAddContactClick = () => {
-        console.log("Add contact button clicked!");
         setShowAddContactDropdown(!showAddContactDropdown);
     }
 
@@ -103,6 +130,7 @@ function Contact() {
                     setError(data.error);
                 }else{
                     setContacts(data.contacts);
+                    displayContactAddedToast(contactToAdd);
                     setContactToAdd('');
                 }
             }
@@ -127,7 +155,6 @@ function Contact() {
         if(!response.ok){
             console.log("Whoops, could not delete contact.");
         }else{
-            console.log("Contact deleted successfully.");
             setContacts((prev) => prev.filter((contact) => contact.id !== selectedContactId));
             setShowDeleteContactModal(false)
         }
@@ -135,6 +162,7 @@ function Contact() {
 
   return (
     <div className="flex w-[80%] h-full">
+        <ToastContainer />
         <div className="w-[60%] flex flex-col px-3 py-4 border-e border-e-slate-300 h-full">
             <div className='flex justify-between items-center pb-2.5'>
                 <h2 className='mb-2.5 h-4'>Contacts</h2>

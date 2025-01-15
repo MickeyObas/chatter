@@ -7,6 +7,11 @@ import GroupChatMessagesSection from '../../components/ui/GroupChatMessagesSecti
 import { useAuth } from '../../context/AuthContext';
 import { useChat } from '../../context/ChatContext';
 
+// Toast Notification
+import { Slide, Bounce, ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import { useOnlineContacts } from "../../context/OnlineContactsContext";
+
 function Group() {
   const { groupId } = useParams();
   const [groupChat, setGroupChat] = useState(null);
@@ -15,6 +20,31 @@ function Group() {
   const { user } = useAuth();
   const { groupChats, setGroupChats } = useChat();
   const navigate = useNavigate();
+
+  const ContactAddedMessage = ({ data }) => (
+    <div>
+        <p className="text-[11px]">You added "{data?.user?.split("@")[0]}" to the group "{data?.title}".</p>
+    </div>
+    );
+
+  const displayContactAddedToast = (contact, title) => {
+    toast.success(ContactAddedMessage, {
+        data: {
+          user: contact,
+          title: title
+        },
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+        });
+    }
+
 
   useEffect(() => {
     const openConnection = async () => {
@@ -26,7 +56,6 @@ function Group() {
         const data = JSON.parse(event.data);
 
         if(data['type'] === 'groupchat.message'){
-          console.log("Data Sent Back ===> ", data);
           setGroupChat((prev) => (
             {
               ...prev,
@@ -92,15 +121,12 @@ function Group() {
             console.log("Whoops, couldn't set messages as read.");
         }else{
             const data = await response.json();
-            console.log(data);
             setGroupChats((prev) => {
                 const index = prev.findIndex(gc => gc.id === groupId);
                 const updatedChats = [...prev];
                 const updatedChat = {...prev[index], unread_messages_count: 0};
 
                 updatedChats[index] = updatedChat;
-
-                console.log("ZEEEEEE: ", updatedChats);
 
                 return updatedChats;
             })
@@ -117,7 +143,9 @@ function Group() {
 
   return (
     <div className='w-[80%] flex'>
+      <ToastContainer />
         <GroupInboxMessageSection 
+          displayContactAddedToast={displayContactAddedToast}
           groupChat={groupChat}
           groupChatSocket={groupChatSocket}
           isGroupChatLoading={loading}

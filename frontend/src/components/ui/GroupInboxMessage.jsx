@@ -1,7 +1,13 @@
 import React from 'react'
 import { getProfilePicture, formatDatetime } from '../../utils'
 
-export default function GroupInboxMessage({ message, ownerIsSender, user}){
+export default function GroupInboxMessage({ message, ownerIsSender, user, colorMap}){
+    let senderNameColor = null;
+    if(!ownerIsSender){
+        senderNameColor = colorMap[message?.sender?.id];
+    };
+    console.log(senderNameColor);
+    
     if(!ownerIsSender){
         return (
         <div className='flex w-[70%] items-center'>
@@ -10,7 +16,7 @@ export default function GroupInboxMessage({ message, ownerIsSender, user}){
             </div>
             <div className='flex flex-col ms-3 w-full max-w-[100%]'>
                 <div className='flex justify-between text-xs items-center w-[85%]'>
-                    <h2>{message?.sender?.name.split(' ')[0]}</h2>
+                    <h2 style={{color: senderNameColor}}>{message?.sender?.name.split(' ')[0]}</h2>
                     <h2 className='text-[10px]'>{formatDatetime(message?.created_at)}</h2>
                 </div>
                 <div className='mt-1.5 bg-slate-100 p-4 rounded-lg w-fit'>

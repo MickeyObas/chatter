@@ -17,7 +17,6 @@ function formatTime(dateString) {
   }
   
   const isoDate = "2025-01-13T15:56:45.219198Z";
-  console.log(formatTime(isoDate)); // Output: "3:56pm"
   
 
 function GroupChatMessagesSection({groupChats}) {
@@ -28,7 +27,6 @@ function GroupChatMessagesSection({groupChats}) {
 
     const getContact = (id) => {
         const someContact = contacts.find((contact) => contact?.contact_user?.id === id);
-        console.log(someContact);
         return someContact;
     }
 
@@ -42,7 +40,6 @@ function GroupChatMessagesSection({groupChats}) {
                 console.log("Whoops, couldn't set messages as read.");
             }else{
                 const data = await response.json();
-                console.log(data);
                 setGroupChats((prev) => {
                     const index = prev.findIndex(gc => gc.id === groupChatId);
                     const updatedChats = [...prev];

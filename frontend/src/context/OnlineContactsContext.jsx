@@ -26,7 +26,6 @@ export function OnlineContactsProvider({ children }){
         localStorage.setItem('prev_online_users', JSON.stringify([]));
 
         eventSource.onopen = (event) => {
-            console.log("I just opened an EventSource brooo");
         }
 
         eventSource.onmessage = function(event) {
@@ -37,19 +36,12 @@ export function OnlineContactsProvider({ children }){
 
             const prevOnlineUsers = JSON.parse(localStorage.getItem('prev_online_users'));
             localStorage.setItem('prev_online_users', JSON.stringify(onlineUsers));
-
-            console.log("Previous online users: ", prevOnlineUsers);
-            console.log("Incoming Online users:", onlineUsers);
            
             if(!(onlineUsers.length === 0 && prevOnlineUsers.length === 0)){
                 if(!areArraysIdentical(onlineUsers, prevOnlineUsers)){
                     const usersThatCameOnline = difference(onlineUsers, prevOnlineUsers);
                     const usersThatWentOffline = difference(prevOnlineUsers, onlineUsers);
-                    console.log("Users that came online -> ", usersThatCameOnline);
-                    console.log("Users that went offline -> ", usersThatWentOffline);
                     const latestContacts = contacts.filter((contact) => onlineUsers.includes(contact.contact_user.id));
-                    console.log("All contacts: ", contacts);
-                    console.log("Latest contacts: ", latestContacts);
                     setOnlineContacts(() => contacts.filter((contact) => onlineUsers.includes(contact.contact_user.id)));
                 }
             }
@@ -78,13 +70,11 @@ export function OnlineContactsProvider({ children }){
                 });
 
                 if(!response.ok){
-                    console.log(response);
                     console.error("Something went wrong in getting online contacts -> ");
                 }else{
                     const data = await response.json();
                     setOnlineContacts(data);
                     localStorage.setItem('online_contacts', JSON.stringify(data));
-                    console.log(data);
                 }
             } catch(err){
                 console.log(err);

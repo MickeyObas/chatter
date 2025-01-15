@@ -32,7 +32,6 @@ function Groups() {
 
   const nonZeroUnreadMessagesGroupChats = groupChats.filter((groupChat) => groupChat.unread_messages_count > 0);
 
-  console.log(zeroUnreadMessagesGroupChats);
 
   const GroupCreatedMessage = ({ closeToast, toastProps }) => (
     <div>
@@ -41,7 +40,6 @@ function Groups() {
     );
 
   const displayGroupCreatedToast = () => {
-    console.log("Sending toast");
     toast.success(GroupCreatedMessage, {
         position: "top-right",
         autoClose: 5000,
@@ -66,7 +64,6 @@ function Groups() {
   };
 
   const handleCreateGroupClick = () => {
-    console.log("Create Group button clicked.")
     setShowCreateGroupModal(true);
   };
 
@@ -146,7 +143,6 @@ function Groups() {
         const data = await response.json();
         displayGroupCreatedToast();
         setGroupChats((prev) => [data, ...prev])
-        console.log(data);
         setShowCreateGroupModal(false);
         setNewGroupName('');
         setSelected([]);
@@ -187,7 +183,7 @@ function Groups() {
                     <input type="text" className='py-1 px-1.5 rounded-e-lg text-xs border-none outline-none w-full' placeholder='Search my contacts'/>
                   </div>
                 </div>
-                <div className="flex flex-col mt-2">
+                <div className="flex flex-col mt-2 max-h-[68vh] overflow-auto">
                   {contacts?.length > 0 ? contacts?.map((contact, idx) => (
                     <div 
                       key={idx} className="contact flex items-center py-2.5 px-4 cursor-pointer"
@@ -206,6 +202,7 @@ function Groups() {
                           value={contact.contact_user.id} 
                           className="check scale-110 cursor-pointer"
                           // onChange={handleCheckboxChange}
+                          readOnly={true}
                           checked={selected.includes(contact.contact_user.id.toString())}
                           />
                       </div>
@@ -259,7 +256,7 @@ function Groups() {
                 </div>
                 <div className="flex flex-col p-1.5 mt-3">
                   <h2 className="text-xs">Members: {selected.length}</h2>
-                  <div className="flex mt-2.5 flex-wrap gap-3 px-2">
+                  <div className="flex mt-2.5 flex-wrap gap-3 w-[90%] mx-auto">
                     {contacts && contacts.filter((contact) => selected.includes(contact.contact_user.id.toString())).map((contact, idx) => (
                       <div key={idx} className="flex flex-col items-center w-12">
                         <div className="w-10 h-10 rounded-full overflow-hidden flex justify-center items-center outline outline-blue-500 outline-[0.5px]">
@@ -295,7 +292,7 @@ function Groups() {
             </div>
             {/* Groups Container */}
             <div className='flex flex-col mt-3.5 gap-y-1.5 overflow-y-auto px-3.5 max-h-[80vh] overflow-hidden'>
-            {groupChats && [...nonZeroUnreadMessagesGroupChats, ...zeroUnreadMessagesGroupChats].map((groupChat, idx) => (
+            {groupChats.length > 0 ? [...nonZeroUnreadMessagesGroupChats, ...zeroUnreadMessagesGroupChats].map((groupChat, idx) => (
               <div 
                 key={idx} 
                 className={`flex items-center p-2 cursor-pointer  rounded-full ${groupChat.id === selectedGroupChatId ? 'bg-blue-500 text-white' : 'hover:bg-slate-200'}`}
@@ -314,7 +311,9 @@ function Groups() {
                 </div>
                 )}
               </div>
-            ))}
+            )) : (
+              <div className="text-center text-[16px] mt-3 text-slate-300">Sorry, you're not a member of any group.</div>
+            )}
             </div>
         </div>
         <div className="w-[40%] flex flex-col pt-3">
@@ -347,8 +346,12 @@ function Groups() {
               </div>
           </div>
           </>
+        ) : groupChats.length === 0 ? (
+          <div className="h-full flex justify-center items-center text-slate-300">
+            <p>Why not start your very own?</p>
+          </div>
         ) : (
-          <div className="h-full flex justify-center items-center">
+          <div className="h-full flex justify-center items-center text-slate-300">
             <p>Select a group chat to start chatting.</p>
           </div>
         )}
