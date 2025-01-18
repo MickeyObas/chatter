@@ -6,10 +6,9 @@ import { useChat } from '../../context/ChatContext';
 
 export default function ChatMessagesContainer({setUnreadMessagesCount}){
     const { chats } = useChat(); 
-
     if (chats.length === 0){
         return (
-            <div className='text-xs flex items-center justify-center h-full'>No chats yet.</div>
+            <div className='text-[14px] flex items-center justify-center h-full text-slate-300'>No chats yet.</div>
         )
     }
 

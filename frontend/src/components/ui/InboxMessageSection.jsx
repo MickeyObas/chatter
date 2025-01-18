@@ -17,7 +17,7 @@ export default function InboxMessageSection(){
     const { user } = useAuth();
     const ref = useRef(null);
     const messageTextAreaRef = useRef(null);
-    const { chat, setChat, setChats } = useChat();
+    const { chat, chats, setChat, setChats } = useChat();
     // TODO -> chatId =/= localstorage __ context
     let chatId = JSON.parse(localStorage.getItem('chatId'));
     const [loading, setLoading] = useState(false);
@@ -83,10 +83,9 @@ export default function InboxMessageSection(){
 
     }, [chatId, chat, user])
 
-
     if (!chat) return (
         <div className='flex w-[68%] justify-center items-center'>
-            <p>Select a message to begin chatting.</p>
+            <p className='text-slate-300'>Select a message to begin chatting.</p>
         </div>
     );
     

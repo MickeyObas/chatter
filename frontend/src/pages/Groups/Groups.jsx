@@ -312,7 +312,9 @@ function Groups() {
                 )}
               </div>
             )) : (
-              <div className="text-center text-[16px] mt-3 text-slate-300">Sorry, you're not a member of any group.</div>
+              <div className="flex justify-center items-center h-full">
+                <p className="text-[16px] mt-3 text-slate-300">Whoops, you're not a member of any group.</p>
+              </div>
             )}
             </div>
         </div>

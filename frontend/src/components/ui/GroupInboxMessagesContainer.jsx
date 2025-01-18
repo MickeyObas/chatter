@@ -35,9 +35,8 @@ const GroupInboxMessagesContainer = forwardRef(({groupChat, messageTextAreaRef},
                 <GroupInboxMessage 
                     key={idx}
                     message={message}
-                    ownerIsSender={message?.sender?.id===user.id}
-                    user={user}
-                    colorMap={groupChat?.contact_color_map}
+                    userIsSender={message?.sender?.id===user.id}
+                    displayNameColor={groupChat?.contact_color_map[message?.sender.id]}
                 />
             )) : (
                 <div>

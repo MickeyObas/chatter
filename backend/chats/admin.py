@@ -8,6 +8,7 @@ class ChatModelAdmin(admin.ModelAdmin):
 
 class GroupChatModelAdmin(admin.ModelAdmin):
     list_display = [
+        'id',
         'owner',
         'title',
         'description'

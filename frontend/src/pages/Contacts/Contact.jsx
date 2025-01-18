@@ -215,8 +215,8 @@ function Contact() {
             {/* Contacts Container */}
             <div className='flex flex-col mt-3.5 gap-y-2 overflow-y-auto px-1 h-full'>
                 {contacts.length === 0 && !loading && (
-                    <div className='flex items-center justify-center h-full'>
-                        <h1>No contacts yet.</h1>
+                    <div className='flex justify-center h-full'>
+                        <h1 className='text-slate-300 m-2.5'>No contacts yet.</h1>
                     </div>
                 )}
                 {loading ? (
@@ -293,6 +293,10 @@ function Contact() {
                         </div>
                     </div>
                 </>
+            ) : contacts.length === 0 ? (
+                <div className='flex items-center justify-center h-full'>
+                    <div className='text-center text-slate-300'>You can't chat without contacts. Add one :)</div>
+                </div>
             ) : (
                 <div className='flex items-center justify-center h-full'>
                     <div className='text-center'>Select a contact to view their details.</div>

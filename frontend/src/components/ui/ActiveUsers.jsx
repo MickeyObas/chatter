@@ -44,7 +44,7 @@ export default function ActiveUsers(){
                         <ActiveUser key={idx} contact={contact}/>
                     ))) : (
                         <div className='h-9 flex w-full justify-center  flex-shrink-0 items-center'>
-                            <h1 className='text-xs text-center h-full mt-4'>No Active Users</h1>
+                            <h1 className='text-xs text-center h-full mt-4 text-slate-300'>No Active Users</h1>
                         </div>
                     )}
                 </div>
