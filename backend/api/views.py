@@ -91,6 +91,7 @@ def email_confirm(request, token):
 
 @api_view(['POST'])
 def exchange_code_for_tokens(request):
+    # Get authorization token from FE
     code = json.loads(request.body)['auth_code']
 
     if not code:
@@ -98,7 +99,6 @@ def exchange_code_for_tokens(request):
 
     CLIENT_ID = settings.GOOGLE_CLIENT_ID
     CLIENT_SECRET = settings.GOOGLE_CLIENT_SECRET
-    REDIRECT_URI = "http://localhost:8000"
     TOKEN_URL = "https://oauth2.googleapis.com/token"
 
     # Exchange authorization code for tokens
@@ -108,38 +108,32 @@ def exchange_code_for_tokens(request):
             "code": code,
             "client_id": CLIENT_ID,
             "client_secret": CLIENT_SECRET,
-            "redirect_uri": REDIRECT_URI,
+            "redirect_uri": "postmessage",
             "grant_type": "authorization_code",
         },
     )
 
     if response.status_code == 200:
+        # Returns access, refresh, and ID tokens
         response_data = response.json()
-        print(response_data)
-        return response.json()  
+
+        # Verify the token with Google's API
+        try:
+            CLIENT_ID = settings.GOOGLE_CLIENT_ID
+            idinfo = id_token.verify_oauth2_token(response_data['id_token'], google_requests.Request(), CLIENT_ID)
+            
+            # Extract user info
+            email = idinfo.get("email")
+            name = idinfo.get("name")
+
+            # Create/Get User Account
+            # Create Tokens for in-app sessions
+            print(f"User {email} has been verified and confirmed as a goolgle user.")
+
+            return Response(response.json()) 
+
+        except Exception as e:
+            return Response({'error': str(e)})
+
     else:
         raise Exception(f"Failed to exchange code: {response.text}")
-
-
-@api_view(['POST'])
-def google_view(request):
-    token = json.loads(request.body)['id_token']
-
-    if not token:
-        return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    try:
-        # Verify the token with Google's API
-        CLIENT_ID = settings.GOOGLE_CLIENT_ID
-        print(CLIENT_ID)
-        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
-        
-        # Extract user info
-        email = idinfo.get("email")
-        name = idinfo.get("name")
-
-    except Exception as e:
-        return Response({'error': str(e)})
-
-    print(token)
-    return Response({'test': 'test'}, status=status.HTTP_200_OK)
