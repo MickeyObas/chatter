@@ -13,5 +13,6 @@ urlpatterns = [
     path('email-confirm/<str:token>/', views.email_confirm, name='email-confirm'),
     path('contacts/', include('contacts.urls')),
     path('chats/', include('chats.urls')),
-    path('messages/', include('messaging.urls'))
+    path('messages/', include('messaging.urls')),
+    path('google-tokens/', views.exchange_code_for_tokens)
 ]

@@ -11,11 +11,18 @@ from django.http import JsonResponse
 
 from django.contrib.auth import authenticate
 from django.core.cache import cache
+from django.conf import settings
 
 from accounts.models import CustomUser
 from accounts.serializers import UserSerializer
 from backend.config.redis_client import redis_client
-    
+
+
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+
+import json
+import requests    
 
 @api_view(['POST'])
 def register(request):
@@ -80,3 +87,59 @@ def email_confirm(request, token):
     cache.delete(token)
 
     return Response({"message": "Email confirmed. Redirecting to Login"}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def exchange_code_for_tokens(request):
+    code = json.loads(request.body)['auth_code']
+
+    if not code:
+        return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    CLIENT_ID = settings.GOOGLE_CLIENT_ID
+    CLIENT_SECRET = settings.GOOGLE_CLIENT_SECRET
+    REDIRECT_URI = "http://localhost:8000"
+    TOKEN_URL = "https://oauth2.googleapis.com/token"
+
+    # Exchange authorization code for tokens
+    response = requests.post(
+        TOKEN_URL,
+        data={
+            "code": code,
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET,
+            "redirect_uri": REDIRECT_URI,
+            "grant_type": "authorization_code",
+        },
+    )
+
+    if response.status_code == 200:
+        response_data = response.json()
+        print(response_data)
+        return response.json()  
+    else:
+        raise Exception(f"Failed to exchange code: {response.text}")
+
+
+@api_view(['POST'])
+def google_view(request):
+    token = json.loads(request.body)['id_token']
+
+    if not token:
+        return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        # Verify the token with Google's API
+        CLIENT_ID = settings.GOOGLE_CLIENT_ID
+        print(CLIENT_ID)
+        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
+        
+        # Extract user info
+        email = idinfo.get("email")
+        name = idinfo.get("name")
+
+    except Exception as e:
+        return Response({'error': str(e)})
+
+    print(token)
+    return Response({'test': 'test'}, status=status.HTTP_200_OK)

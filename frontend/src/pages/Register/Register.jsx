@@ -2,10 +2,17 @@ import { useState } from "react";
 import { BASE_URL } from "../../constants";
 import Input from "../../components/form/Input";
 import Button from "../../components/form/Button";
+import { fetchWithAuth } from '../../utils';
 
 // Toast Notification
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+
+import { 
+    GoogleLogin, 
+    googleLogout,
+    useGoogleLogin
+ } from "@react-oauth/google";
 
 export function Register(){
 
@@ -22,6 +29,7 @@ export function Register(){
         lastName: ''
     });
     const [loading, setLoading] = useState(false);
+    // const [googleAuthResponse, setGoogleAuthResponse] = useState(null);
 
     const validate = () => {
         let isValid = true;
@@ -120,7 +128,45 @@ export function Register(){
             theme: "light",
             transition: Bounce,
             });
-    }
+        }
+        
+        const onGoogleLoginSuccess = async (googleAuthResponse) => {
+            console.log("Google login successful.");
+            console.log(googleAuthResponse);
+
+            // Send access token to backend
+            try {
+                const response = await fetch(`${BASE_URL}/google-tokens/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'auth_code': googleAuthResponse.code})
+                });
+
+                if(!response.ok){
+                    console.log("Response is not okay.");
+                }else{
+                    const data = await response.json();
+                    console.log(data);
+                }
+            }catch(err){
+                console.log(err);
+            }
+            
+        }
+    
+        const onGoogleLoginError = (error) => {
+            console.log("Google login error.")
+            console.log(error);
+        }
+
+    const googleLogin = useGoogleLogin({
+        onSuccess: onGoogleLoginSuccess,
+        onError: onGoogleLoginError,
+        flow: 'auth-code'
+    })
+
 
     return (
         <div className="flex h-screen">
@@ -182,6 +228,17 @@ export function Register(){
                         text="Register"
                         loading={loading}
                         />
+                    {/* <GoogleLogin 
+                        width={'275px'}
+                        text={"signup_with"}
+                        onSuccess={onGoogleLoginSuccess}
+                        onError={onGoogleLoginError}
+                    /> */}
+                    <button className="bg-red-400"
+                    onClick={() => googleLogin()}
+                    >
+                        Continue with Google
+                    </button>
                 </form>
             </div>
         </div>
