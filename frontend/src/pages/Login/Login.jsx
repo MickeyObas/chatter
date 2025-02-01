@@ -100,12 +100,13 @@ export function Login(){
     };
 
     return (
-        <div className="flex h-screen">
-            <div className="flex items-center justify-center bg-blue-200 w-1/2">
+        <div className="flex w-full flex-col md:flex-row">
+            <div className="flex items-center justify-center bg-blue-200 md:w-1/2 h-screen">
                 <form 
-                    className="flex flex-col border p-5 bg-white rounded-md gap-y-4 w-1/2 shadow-lg"
+                    className="flex flex-col border p-5 bg-white rounded-md gap-y-4 w-1/2 min-w-[200px] max-w-[400px] shadow-lg"
                     onSubmit={handleSubmit}
                     >
+                    <h1 className="font-medium md:hidden">Login to Chatter</h1>
                     {error.credentials && <p className="text-[13px] text-red-500">{error.credentials}</p>}
                     <Input 
                         label={'Email'}
@@ -133,7 +134,7 @@ export function Login(){
                         />
                 </form>
             </div>
-            <div className="w-1/2 bg-blue-400 flex flex-col items-center justify-center">
+            <div className="hidden md:flex md:w-1/2 bg-blue-400 flex-col items-center justify-center">
                 <h1 className="text-4xl font-bold mb-1.5">Login</h1>
                 <h1>to <span className="underline decoration-blue-700 underline-offset-2 text-lg">Chatter</span></h1>
                 <p className="text-13px text-white mt-10 u">Don't have an account yet? <a href="/register" className="underline decoration-blue-700 underline-offset-2 cursor-pointer hover:text-blue-400 hover:bg-white">Register</a> instead</p>

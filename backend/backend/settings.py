@@ -30,7 +30,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '*'
+]
 
 
 # Application definition
@@ -170,10 +172,9 @@ FRONTEND_URL = os.getenv('FRONTEND_URL')
 # Update 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Frontend address
+    "http://localhost:5173",
+    'https://chatter-blue.netlify.app' 
 ]
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True  # Allow credentials (cookies) to be sent
 

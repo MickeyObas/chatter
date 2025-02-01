@@ -134,7 +134,7 @@ export function Register(){
             console.log("Google login successful.");
             console.log(googleAuthResponse);
 
-            // Send access token to backend
+            // Send access token to backend. I think.
             try {
                 const response = await fetch(`${BASE_URL}/google-tokens/`, {
                     method: 'POST',
