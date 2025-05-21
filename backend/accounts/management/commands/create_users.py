@@ -11,8 +11,7 @@ class Command(BaseCommand):
             User.objects.create(
                 first_name=f"Person {i}",
                 last_name=f"Person {i}",
-                email=f"Person{i}@email.com"
+                email=f"Person{i}@email.com",
             )
-        
-        
-        self.stdout.write(self.style.SUCCESS('Users added successfully'))
+
+        self.stdout.write(self.style.SUCCESS("Users added successfully"))

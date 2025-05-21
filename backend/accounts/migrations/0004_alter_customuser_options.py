@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0003_customuser_deleted_at'),
+        ("accounts", "0003_customuser_deleted_at"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='customuser',
-            options={'verbose_name': 'User', 'verbose_name_plural': 'Users'},
+            name="customuser",
+            options={"verbose_name": "User", "verbose_name_plural": "Users"},
         ),
     ]

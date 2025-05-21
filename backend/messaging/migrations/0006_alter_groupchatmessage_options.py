@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('messaging', '0005_groupchatmessage'),
+        ("messaging", "0005_groupchatmessage"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='groupchatmessage',
-            options={'get_latest_by': 'created_at', 'ordering': ['created_at']},
+            name="groupchatmessage",
+            options={"get_latest_by": "created_at", "ordering": ["created_at"]},
         ),
     ]

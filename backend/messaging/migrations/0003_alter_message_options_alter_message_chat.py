@@ -7,18 +7,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('chats', '0003_chat_last_read_message_alter_chat_unique_together'),
-        ('messaging', '0002_message_chat'),
+        ("chats", "0003_chat_last_read_message_alter_chat_unique_together"),
+        ("messaging", "0002_message_chat"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='message',
-            options={'get_latest_by': 'created_at', 'ordering': ['created_at']},
+            name="message",
+            options={"get_latest_by": "created_at", "ordering": ["created_at"]},
         ),
         migrations.AlterField(
-            model_name='message',
-            name='chat',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='messages', to='chats.chat'),
+            model_name="message",
+            name="chat",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="messages",
+                to="chats.chat",
+            ),
         ),
     ]

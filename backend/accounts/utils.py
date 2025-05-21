@@ -1,7 +1,8 @@
-from django.core.mail import send_mail
-from django.conf import settings
-
 import secrets
+
+from django.conf import settings
+from django.core.mail import send_mail
+
 
 def generate_confirmation_token():
     return secrets.token_urlsafe(64)

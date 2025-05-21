@@ -8,19 +8,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('chats', '0002_chat_owner'),
-        ('messaging', '0002_message_chat'),
+        ("chats", "0002_chat_owner"),
+        ("messaging", "0002_message_chat"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='chat',
-            name='last_read_message',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='last_read_message_chat', to='messaging.message'),
+            model_name="chat",
+            name="last_read_message",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="last_read_message_chat",
+                to="messaging.message",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='chat',
-            unique_together={('owner', 'user')},
+            name="chat",
+            unique_together={("owner", "user")},
         ),
     ]

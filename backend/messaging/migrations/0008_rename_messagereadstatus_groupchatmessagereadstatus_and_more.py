@@ -8,18 +8,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('messaging', '0007_messagereadstatus'),
+        ("messaging", "0007_messagereadstatus"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='MessageReadStatus',
-            new_name='GroupChatMessageReadStatus',
+            old_name="MessageReadStatus",
+            new_name="GroupChatMessageReadStatus",
         ),
         migrations.AlterField(
-            model_name='groupchatmessagereadstatus',
-            name='message',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='messaging.groupchatmessage'),
+            model_name="groupchatmessagereadstatus",
+            name="message",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="messaging.groupchatmessage",
+            ),
         ),
     ]

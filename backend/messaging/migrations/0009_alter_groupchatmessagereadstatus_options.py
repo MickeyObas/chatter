@@ -6,12 +6,15 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('messaging', '0008_rename_messagereadstatus_groupchatmessagereadstatus_and_more'),
+        (
+            "messaging",
+            "0008_rename_messagereadstatus_groupchatmessagereadstatus_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='groupchatmessagereadstatus',
-            options={'get_latest_by': 'read_at'},
+            name="groupchatmessagereadstatus",
+            options={"get_latest_by": "read_at"},
         ),
     ]

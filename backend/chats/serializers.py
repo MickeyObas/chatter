@@ -1,36 +1,33 @@
 from rest_framework import serializers
 
-from .models import Chat, GroupChat, UserGroupContactColorMap
-from messaging.models import Message, GroupChatMessageReadStatus
 from accounts.models import CustomUser
 from accounts.serializers import UserSummarySerializer
-from messaging.serializers import MessageSerializer, GroupChatMessageSerializer
+from messaging.models import GroupChatMessageReadStatus, Message
+from messaging.serializers import GroupChatMessageSerializer, MessageSerializer
+
+from .models import Chat, GroupChat, UserGroupContactColorMap
 
 
 class UserGroupContactColorMapSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserGroupContactColorMap
-        fields = [
-            'group',
-            'contact_user',
-            'color'
-        ]
+        fields = ["group", "contact_user", "color"]
 
 
 class ChatSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(many=True, read_only=True)
     owner = UserSummarySerializer()
     user = UserSummarySerializer()
-    
-    class Meta: 
+
+    class Meta:
         model = Chat
         fields = [
-            'id',
-            'owner',
-            'user',
-            'messages',
-            'created_at',
-            'updated_at',
+            "id",
+            "owner",
+            "user",
+            "messages",
+            "created_at",
+            "updated_at",
         ]
 
 
@@ -42,12 +39,12 @@ class ChatDisplaySerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
         fields = [
-            'id',
-            'user',
-            'latest_message',
-            'unread_messages_count',
-            'created_at',
-            'updated_at',
+            "id",
+            "user",
+            "latest_message",
+            "unread_messages_count",
+            "created_at",
+            "updated_at",
         ]
 
     def get_unread_messages_count(self, obj):
@@ -55,15 +52,15 @@ class ChatDisplaySerializer(serializers.ModelSerializer):
 
     def get_latest_message(self, obj):
         try:
-            latest_message =  obj.messages.latest()
+            latest_message = obj.messages.latest()
             if latest_message:
                 return {
                     "sender": latest_message.sender.id,
                     "content": latest_message.content,
                     "created_at": latest_message.created_at.isoformat(),
-                    "is_read": latest_message.is_read
+                    "is_read": latest_message.is_read,
                 }
-            
+
         except obj.messages.model.DoesNotExist:
             return None
 
@@ -75,26 +72,23 @@ class GroupChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupChat
         fields = [
-            'id',
-            'title',
-            'owner',
-            'admins',
-            'description',
-            'messages',
-            'picture',
-            'members',
-            'contact_color_map',
-            'created_at',
-            'updated_at'
+            "id",
+            "title",
+            "owner",
+            "admins",
+            "description",
+            "messages",
+            "picture",
+            "members",
+            "contact_color_map",
+            "created_at",
+            "updated_at",
         ]
 
     def get_contact_color_map(self, obj):
-        user_id = self.context.get('user_id')
+        user_id = self.context.get("user_id")
         user = CustomUser.objects.get(id=user_id)
-        color_maps = UserGroupContactColorMap.objects.filter(
-            user=user,
-            group=obj
-        )
+        color_maps = UserGroupContactColorMap.objects.filter(user=user, group=obj)
 
         color_maps_obj = {}
 
@@ -106,30 +100,34 @@ class GroupChatSerializer(serializers.ModelSerializer):
     def get_messages(self, obj):
         messages = obj.groupchatmessage_set.all()
         return GroupChatMessageSerializer(messages, many=True).data
-    
+
 
 class GroupChatCreateSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=True)
     description = serializers.CharField(max_length=300, required=False)
-    admins = serializers.PrimaryKeyRelatedField(many=True, queryset=CustomUser.objects.all())
-    members = serializers.PrimaryKeyRelatedField(many=True, queryset=CustomUser.objects.all())
-    
+    admins = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=CustomUser.objects.all()
+    )
+    members = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=CustomUser.objects.all()
+    )
+
     class Meta:
         model = GroupChat
         fields = [
-            'title',
-            'admins',
-            'description',
-            'picture',
-            'members',
+            "title",
+            "admins",
+            "description",
+            "picture",
+            "members",
         ]
-    
+
     def create(self, validated_data):
-        request = self.context.get('request')
+        request = self.context.get("request")
         owner = request.user
 
-        admins = validated_data.pop('admins', [])
-        members = validated_data.pop('members', [])
+        admins = validated_data.pop("admins", [])
+        members = validated_data.pop("members", [])
 
         group_chat = GroupChat.objects.create(owner=owner, **validated_data)
 
@@ -147,30 +145,27 @@ class GroupChatDisplaySerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupChat
         fields = [
-            'id',
-            'title',
-            'owner',
-            'latest_message',
-            'total_messages_count',
-            'unread_messages_count',
-            'description',
-            'picture',
-            'created_at'
+            "id",
+            "title",
+            "owner",
+            "latest_message",
+            "total_messages_count",
+            "unread_messages_count",
+            "description",
+            "picture",
+            "created_at",
         ]
 
     def get_unread_messages_count(self, obj):
-        user_id = self.context.get('user_id')
+        user_id = self.context.get("user_id")
         user = CustomUser.objects.get(id=user_id)
 
         last_read_group_message_timestamp = GroupChatMessageReadStatus.objects.filter(
-            user=user,
-            message__groupchat=obj.id
+            user=user, message__groupchat=obj.id
         )
 
         if not last_read_group_message_timestamp.exists():
-            unread_messages = obj.groupchatmessage_set.all().exclude(
-                sender=user
-            )
+            unread_messages = obj.groupchatmessage_set.all().exclude(sender=user)
         else:
             last_read_group_message = last_read_group_message_timestamp.latest()
             time_boundary = last_read_group_message.read_at
@@ -182,7 +177,7 @@ class GroupChatDisplaySerializer(serializers.ModelSerializer):
 
     def get_total_messages_count(self, obj):
         return obj.groupchatmessage_set.count()
-        
+
     def get_latest_message(self, obj):
         try:
             latest_message = obj.groupchatmessage_set.latest()

@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contacts', '0003_remove_contact_status_text'),
+        ("contacts", "0003_remove_contact_status_text"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='contact',
-            options={'ordering': ['contact_user__email']},
+            name="contact",
+            options={"ordering": ["contact_user__email"]},
         ),
     ]
