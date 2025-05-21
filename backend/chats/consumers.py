@@ -22,6 +22,9 @@ from messaging.serializers import (CreateGroupChatMessageSerializer,
                                    MessageSerializer)
 
 
+# Looking back, a lot of this is spaghetti code and not-so-pretty practices. Will either fix or completely rebuild later for fun lmao
+
+
 @database_sync_to_async
 def get_chat_display(chat_id):
     chat = Chat.objects.get(id=chat_id)
