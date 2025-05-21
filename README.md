@@ -16,11 +16,10 @@ A real-time messaging platform built using React on the front-end and Django wit
 
 ## Technologies Used
 ### Frontend
-- React w/ Typescript
+- React
 - React Router
 - Vanilla + Tailwind CSS
 - Fetch API
-- React (Typescript)
 - TailwindCSS
 - Vite
 ### Backend
